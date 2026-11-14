@@ -1,0 +1,19 @@
+# Editors
+.idea/
+*.iml
+.vscode/
+
+# Frontend
+node_modules/
+dist/
+
+# Backend
+target/
+
+# Secrets and local config
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
