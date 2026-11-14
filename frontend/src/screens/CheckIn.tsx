@@ -6,7 +6,7 @@ function CheckIn() {
     const [values, setValues] = useState<Record<number, string>>({}); // key is indicatorId, value is the input value
     function handleSubmit() {
         const measurements: NewMeasurement[] = Object.entries(values)   //Turns the values into a list of pairs
-            .filter(([_, value]) => value !== "") // gets rid of any box that the user left empty
+            .filter(([, value]) => value !== "") // gets rid of any box that the user left empty
             .map(([id,value]) => ({       // Turns each paur into a NewMeasurement,follows the contract for POST /api/measurements
                 crewMemberId: 1, // hardcoded for now
                 indicatorId: Number(id),
@@ -20,7 +20,7 @@ function CheckIn() {
             <h2>Daily check-in</h2>
             {mockIndicators.map((indicator) => (
                 <div key={indicator.id}>
-                    <h3>{indicator.name} {indicator.unit}</h3>
+                    <h3>{indicator.name} ({indicator.unit})</h3>
                     <p>{indicator.howToMeasure}</p>
                     <input
                         type="number"
