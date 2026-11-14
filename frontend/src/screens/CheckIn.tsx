@@ -12,6 +12,7 @@ const inputLimits: Record<number, { min: number; max?: number }> = {
 function CheckIn() {
     const [values, setValues] = useState<Record<number, string>>({}); // key is indicatorId, value is the input value
     const [error, setError] = useState("");     // State to hold error messages
+    const [saved, setSaved] = useState(false); // State to indicate if the check-in was saved successfully
     function handleSubmit() {       //Handle the submit button click
         const measurements: NewMeasurement[] = Object.entries(values)   //Turns the values into a list of pairs
             .filter(([, value]) => value !== "") // gets rid of any box that the user left empty
@@ -33,6 +34,7 @@ function CheckIn() {
             }
             setError("");       // If all values are valid, clear any previous error messages
             console.log(measurements);
+            setSaved(true);
         }
     return (
         <div>
@@ -48,13 +50,14 @@ function CheckIn() {
                         onChange={(e) => {
                             setValues({ ...values, [indicator.id]: e.target.value });
                             setError("");
+                            setSaved(false);
                         }}
                     />
                 </div>
             ))}
             {error && <p style={{ color: "red" }}>{error}</p>}
+            {saved && <p style={{ color: "green" }}>Check-in saved successfully!</p>}
             <button onClick={handleSubmit}>Submit check-in</button>
-            <pre>{JSON.stringify(values)}</pre>
         </div>
     );
 }
