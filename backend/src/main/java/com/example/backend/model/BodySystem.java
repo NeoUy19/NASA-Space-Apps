@@ -6,6 +6,5 @@ public enum BodySystem {
     THERMOREGULATION,
     SLEEP,
     BEHAVIORAL,
-    //Cognitive is a maybe right now
     COGNITIVE
 }

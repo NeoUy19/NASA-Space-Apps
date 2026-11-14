@@ -33,10 +33,11 @@ so assessment logic must work with no network.
   model call that rephrases rule-engine output as a daily briefing. Rules stay the source of truth.
 
 ## Current state
-- Both scaffolds committed and pushed, root `.gitignore` in place.
-- In progress: `GET /api/health` connection test, CORS for `http://localhost:5173`,
-  fetch from `App.tsx`.
-- Next: write `api-contract.md`, then entities, measurement endpoints, assessment service.
+- Done: `GET /api/health` and CORS, full `api-contract.md`, JPA entities and repositories,
+  `docs/health-content.md` (no NASA fixed ranges, so range fields are nullable).
+- Assessment: baselines are computed from past readings, not stored. The proposed rule is
+  CAUTION above 2 and ALERT above 3 standard deviations from the person's own baseline.
+- Per-person tasks live in `TODO.md`. The learning log is `LEARNING_LOG.md`.
 
 ## Team
 - Me (fullstack): API contract, assessment service and `/status` endpoint, SVG body figure,
@@ -69,7 +70,7 @@ based on NASA's Spaceflight Standard Measures.
 
 ## Conventions
 - JSON fields in camelCase. Timestamps as ISO 8601 strings in UTC.
-- Status values: `NORMAL`, `CAUTION`, `ALERT`.
+- Status values: `NORMAL`, `CAUTION`, `ALERT`, plus `NO_DATA` for body systems with no measurements.
 - `api-contract.md` is the source of truth. Update it before changing an endpoint.
 - Before every commit, explain the key concepts used in the change like I'm 5 (a few sentences, everyday analogy), then add a dated entry to `LEARNING_LOG.md` (progress, plus any new concepts or design decisions) so it's part of the commit.
 - Short-lived branches, merge to main every couple of hours.
