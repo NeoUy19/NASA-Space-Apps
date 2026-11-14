@@ -24,6 +24,10 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Commit rule added to CLAUDE.md
+- Claude explains the key concepts like you're 5 and updates this log before every commit, for the whole team.
+- Concepts: [New commit vs. amend](#new-commit-vs-amend)
+
 ### 2026-11-14: Frontend and backend connected
 - Added `GET /api/health` in `controller/HealthController.java`. It returns `{"status":"UP"}`.
 - Added `config/CorsConfig.java` so the React dev server can call the API.
@@ -72,6 +76,10 @@ Inside `return ( ... )` is JSX, the HTML-like markup for the screen. Hooks and o
 
 ### Long-running servers
 `./mvnw spring-boot:run` and `npm run dev` keep running and don't give the terminal back. Use separate terminals for the backend, the frontend, and commands like curl or git. Press `Ctrl + C` to stop a server.
+
+### New commit vs. amend
+`git commit --amend` rewrites your last commit. That's fine before you push. Once a commit is pushed, teammates may already have it, and rewriting it forces everyone to untangle the history. After a push, make a new commit instead.
+> Like 5: once you've handed your drawing to a friend, don't secretly swap it. Hand them a second drawing.
 
 ### .gitignore
 This file lists things Git should never track: build output (`target/`, `node_modules/`), editor settings (`.idea/`, `.vscode/`) and secrets (`.env`).
