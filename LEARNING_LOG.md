@@ -1,5 +1,11 @@
 # Learning Log
 
+### 2026-11-14: Health content for all indicators
+- Added `docs/health-content.md`: how to measure, why it matters in space, related hazard, warning signs and NASA sources for all 7 indicators.
+- NASA doesn't publish fixed normal/caution ranges for these, so ranges are flagged for a team decision.
+- Concepts: [Baseline vs. fixed ranges](#baseline-vs-fixed-ranges)
+
+
 What we decided, what we built, and what we learned along the way.
 Add an entry with every commit or merge to `main`. Keep entries short.
 
@@ -55,6 +61,9 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 ---
 
 ## Key concepts
+### Baseline vs. fixed ranges
+A fixed range is one rule for everyone, like "a temperature over 38 °C is a fever." A baseline is each person's own normal. In space, bodies change: healthy astronauts can run about 1 °C warmer than on Earth. So "is this different from *your* usual?" is often a better check than one number for everyone.
+> Like 5: your friend's normal speaking voice is loud, and yours is quiet. If you suddenly start yelling, that's a big change for you, even if it's just normal volume for them.
 
 ### CORS
 Browsers only let a page's JavaScript read responses from its own **origin**: the same scheme, host and port. `localhost:5173` and `localhost:8080` count as different origins. The server opts in by sending `Access-Control-Allow-Origin`. Only browsers enforce this, so it can work in curl and still fail in the browser. For some requests, like a JSON `POST`, the browser first sends an `OPTIONS` **preflight** to ask permission.
