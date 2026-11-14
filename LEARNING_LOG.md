@@ -20,9 +20,19 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 | Indicator ranges are stored as data, not hardcoded | Every range needs a cited source and may change. Data is easier to update and show in the UI. |
 | `api-contract.md` comes before endpoint code | All three of us can build against the same JSON shapes at the same time. |
 | CORS allowed only for `http://localhost:5173` on `/api/**` | Allow just our frontend, nothing wider. Add the Azure URL when we deploy. See [CORS](#cors). |
+| Numeric IDs and one error shape `{ "error": "..." }` | Numbers are the JPA default. One error shape means the frontend handles errors in one place. |
+| Five body systems: `CARDIOVASCULAR`, `RESPIRATORY`, `THERMOREGULATION`, `SLEEP`, `BEHAVIORAL` | One per indicator group, and each maps to a body-figure region. Bone, muscle and vision are pitched as future work, because a quick check-in can't measure them. |
 | Status values `NORMAL`, `CAUTION`, `ALERT` | A small fixed set that maps straight onto the body-figure colors. |
 
 ## Progress
+
+### 2026-11-14: Line endings
+- Added a root `.gitattributes` with `* text=auto`, so Windows (Carl) and macOS commits don't fight over line endings.
+- Concepts: [Line endings (CRLF vs. LF)](#line-endings-crlf-vs-lf)
+
+### 2026-11-14: API contract, part 1
+- `api-contract.md` with shared conventions, the error format, `GET /api/indicators` and `POST /api/measurements`. Range values are placeholders until Adi adds sources.
+- Concepts: [API and contract](#api-and-contract), [GET vs. POST](#get-vs-post), [Markdown gotchas](#markdown-gotchas)
 
 ### 2026-11-14: Team TODO list
 - Added `TODO.md` with tasks per person, ordered so `api-contract.md` comes first, because it unblocks everyone.
@@ -80,6 +90,21 @@ Inside `return ( ... )` is JSX, the HTML-like markup for the screen. Hooks and o
 
 ### Long-running servers
 `./mvnw spring-boot:run` and `npm run dev` keep running and don't give the terminal back. Use separate terminals for the backend, the frontend, and commands like curl or git. Press `Ctrl + C` to stop a server.
+
+### API and contract
+The API is how React and Spring talk: React asks at a URL, and Spring answers with JSON. The contract writes down exactly what each question and answer looks like, so people can build both sides at the same time.
+> Like 5: a restaurant menu. Everyone agrees what "the SpO2 plate" looks like before anyone cooks.
+
+### GET vs. POST
+GET reads and never changes anything; its inputs go in the URL (`?indicator=2`), and it returns `200`. POST creates something new; its data goes in a JSON body, and it returns `201 Created`.
+> Like 5: GET is looking in the fridge. POST is putting a new snack in it.
+
+### Markdown gotchas
+Code blocks need three backticks (`` ``` ``), not `'''` or one `` ` ``. A `---` directly under a line of text turns that line into a heading, so leave a blank line above it. Headings need a space after the `#`.
+
+### Line endings (CRLF vs. LF)
+Every line of text ends with invisible characters. Windows uses CRLF (`\r\n`), and macOS and Linux use LF (`\n`). If they get mixed, Git thinks every line changed. `* text=auto` in `.gitattributes` makes Git store LF in the repo and convert to each computer's native ending on checkout. `mvnw` is forced to LF and `.cmd` files to CRLF, because shell and Windows scripts need those to run.
+> Like 5: Windows puts two full stops at the end of each sentence, and Mac puts one. Git quietly fixes them, so nobody's essay looks rewritten.
 
 ### Unblocking work
 On a team, do first whatever other people are waiting on. The API contract comes first, because Carl's endpoints and Adi's mock data both depend on its JSON shapes. While it's being written, each person picks tasks that don't depend on it (entities, health content).
