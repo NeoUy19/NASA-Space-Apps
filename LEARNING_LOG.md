@@ -1,11 +1,5 @@
 # Learning Log
 
-### 2026-11-14: Health content for all indicators
-- Added `docs/health-content.md`: how to measure, why it matters in space, related hazard, warning signs and NASA sources for all 7 indicators.
-- NASA doesn't publish fixed normal/caution ranges for these, so ranges are flagged for a team decision.
-- Concepts: [Baseline vs. fixed ranges](#baseline-vs-fixed-ranges)
-
-
 What we decided, what we built, and what we learned along the way.
 Add an entry with every commit or merge to `main`. Keep entries short.
 
@@ -27,10 +21,30 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 | `api-contract.md` comes before endpoint code | All three of us can build against the same JSON shapes at the same time. |
 | CORS allowed only for `http://localhost:5173` on `/api/**` | Allow just our frontend, nothing wider. Add the Azure URL when we deploy. See [CORS](#cors). |
 | Numeric IDs and one error shape `{ "error": "..." }` | Numbers are the JPA default. One error shape means the frontend handles errors in one place. |
-| Five body systems: `CARDIOVASCULAR`, `RESPIRATORY`, `THERMOREGULATION`, `SLEEP`, `BEHAVIORAL` | One per indicator group, and each maps to a body-figure region. Bone, muscle and vision are pitched as future work, because a quick check-in can't measure them. |
+| Six body systems: `CARDIOVASCULAR`, `RESPIRATORY`, `THERMOREGULATION`, `SLEEP`, `BEHAVIORAL`, `COGNITIVE` | One per indicator group, and each maps to a body-figure region. `COGNITIVE` covers a reaction-time test. Bone, muscle and vision are pitched as future work, because a quick check-in can't measure them. |
 | Status values `NORMAL`, `CAUTION`, `ALERT` | A small fixed set that maps straight onto the body-figure colors. |
+| Range fields can be `null`, and assessment falls back to the baseline | NASA publishes no fixed ranges for our indicators, and we never invent thresholds. See [Baseline vs. fixed ranges](#baseline-vs-fixed-ranges). |
+| `/status` always returns every body system, using `NO_DATA` for systems not measured yet | The body figure can draw every region without special cases. Unmeasured regions show gray. |
+| Escalation levels `SELF_CARE`, `CREW_MEDICAL_OFFICER`, `FLIGHT_SURGEON` | These match the three guidance tiers in the core loop. |
 
 ## Progress
+
+### 2026-11-14: Assessment building blocks
+- `MeasurementRepository` query for one crew member's readings of one indicator since a given time.
+- `Status` and `EscalationLevel` enums, plus `dto` records (`IndicatorStatus`, `BodySystemStatus`, `StatusResponse`) that mirror the `/status` JSON.
+- Decision: baselines are computed from past readings, not stored.
+- Concepts: [Repositories and derived queries](#repositories-and-derived-queries), [Records and DTOs](#records-and-dtos)
+
+### 2026-11-14: API contract, part 2
+- Added `GET /api/crew/{id}/measurements`, `GET /api/crew/{id}/status` and `GET /api/crew/{id}/alerts`. All six endpoints are now in the contract.
+- Range fields are now nullable, following Adi's finding that NASA gives no fixed ranges.
+- Team decision: six body systems, including `COGNITIVE`, which matches Carl's `BodySystem` enum.
+- Concepts: [Path vs. query parameters](#path-vs-query-parameters), [Nullable fields](#nullable-fields), [Computed vs. stored data](#computed-vs-stored-data)
+
+### 2026-11-14: Health content for all indicators
+- Added `docs/health-content.md`: how to measure, why it matters in space, related hazard, warning signs and NASA sources for all 7 indicators.
+- NASA doesn't publish fixed normal/caution ranges for these, so ranges are flagged for a team decision.
+- Concepts: [Baseline vs. fixed ranges](#baseline-vs-fixed-ranges)
 
 ### 2026-11-14: Line endings
 - Added a root `.gitattributes` with `* text=auto`, so Windows (Carl) and macOS commits don't fight over line endings.
@@ -99,6 +113,26 @@ Inside `return ( ... )` is JSX, the HTML-like markup for the screen. Hooks and o
 
 ### Long-running servers
 `./mvnw spring-boot:run` and `npm run dev` keep running and don't give the terminal back. Use separate terminals for the backend, the frontend, and commands like curl or git. Press `Ctrl + C` to stop a server.
+
+### Path vs. query parameters
+A path parameter is part of the address and is required: `/crew/1/...` means crew member 1. Query parameters come after `?`, are optional filters, and are joined with `&`: `?indicator=2&from=...`.
+> Like 5: the path is the house address. Query parameters are "only bring me the red toys from this week."
+
+### Nullable fields
+`null` means "no value." Carl's entity uses `Double`, which can be `null`, instead of `double`, which can't, so a missing range is stored as "unknown" rather than a fake `0`.
+> Like 5: an empty box is not the same as a box with a zero in it.
+
+### Repositories and derived queries
+A repository is an interface that talks to the database for you. Spring writes the code behind it. Name a method like `findByCrewMemberIdAndIndicatorIdAndTimestampAfterOrderByTimestampAsc`, and Spring turns the name into a query. The compiler doesn't check the name, but Spring does at startup, so run the app or `./mvnw test` to find out if a name is wrong.
+> Like 5: the worker at the warehouse counter. Say exactly what you want, and they fetch it.
+
+### Records and DTOs
+A `record` is a one-line class that just holds data. A DTO (data transfer object) is a class whose only job is to be sent as JSON. Field names become JSON keys, so a typo like `inidcators` compiles fine but breaks the frontend. Always compare field names against the contract.
+> Like 5: a labelled lunchbox. The labels must match what the person opening it expects to find.
+
+### Computed vs. stored data
+Measurements are **stored** in the database. Status and alerts are **computed** from those measurements on each request. Computed data can never fall out of date or contradict the measurements, and there's no extra table to maintain. The cost is a bit of work on every request, which is fine at our size.
+> Like 5: you don't write "I'm 8" on a sticky note and update it every year. You keep your birthday and work out your age whenever someone asks.
 
 ### API and contract
 The API is how React and Spring talk: React asks at a URL, and Spring answers with JSON. The contract writes down exactly what each question and answer looks like, so people can build both sides at the same time.
