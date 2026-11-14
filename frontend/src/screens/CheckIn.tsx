@@ -34,6 +34,7 @@ function CheckIn() {
             }
             setError("");       // If all values are valid, clear any previous error messages
             console.log(measurements);
+            setValues({}); // Clear the input fields after submission
             setSaved(true);
         }
     return (

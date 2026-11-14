@@ -29,6 +29,11 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Check-in form
+- Added `screens/CheckIn.tsx`: one input per indicator, builds `POST /api/measurements` bodies on submit (logged for now, not sent yet).
+- Blocks impossible values (negatives, SpO2 over 100, sleep over 24 h, mood outside 1–5). Health thresholds stay in the assessment service.
+- Concepts: [Controlled inputs](#controlled-inputs)
+
 ### 2026-11-14: Assessment building blocks
 - `MeasurementRepository` query for one crew member's readings of one indicator since a given time.
 - `Status` and `EscalationLevel` enums, plus `dto` records (`IndicatorStatus`, `BodySystemStatus`, `StatusResponse`) that mirror the `/status` JSON.
@@ -159,3 +164,7 @@ On a team, do first whatever other people are waiting on. The API contract comes
 
 ### .gitignore
 This file lists things Git should never track: build output (`target/`, `node_modules/`), editor settings (`.idea/`, `.vscode/`) and secrets (`.env`).
+
+### Controlled inputs
+The input box shows whatever is in React state (`value={...}`), and every keystroke updates that state (`onChange`). React is always the one in charge of what's in the box, so clearing the form is just `setValues({})`.
+> Like 5: the input is a puppet and state holds the strings. Move the strings, and the puppet moves.
