@@ -29,6 +29,12 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Assessment building blocks
+- `MeasurementRepository` query for one crew member's readings of one indicator since a given time.
+- `Status` and `EscalationLevel` enums, plus `dto` records (`IndicatorStatus`, `BodySystemStatus`, `StatusResponse`) that mirror the `/status` JSON.
+- Decision: baselines are computed from past readings, not stored.
+- Concepts: [Repositories and derived queries](#repositories-and-derived-queries), [Records and DTOs](#records-and-dtos)
+
 ### 2026-11-14: API contract, part 2
 - Added `GET /api/crew/{id}/measurements`, `GET /api/crew/{id}/status` and `GET /api/crew/{id}/alerts`. All six endpoints are now in the contract.
 - Range fields are now nullable, following Adi's finding that NASA gives no fixed ranges.
@@ -115,6 +121,14 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Nullable fields
 `null` means "no value." Carl's entity uses `Double`, which can be `null`, instead of `double`, which can't, so a missing range is stored as "unknown" rather than a fake `0`.
 > Like 5: an empty box is not the same as a box with a zero in it.
+
+### Repositories and derived queries
+A repository is an interface that talks to the database for you. Spring writes the code behind it. Name a method like `findByCrewMemberIdAndIndicatorIdAndTimestampAfterOrderByTimestampAsc`, and Spring turns the name into a query. The compiler doesn't check the name, but Spring does at startup, so run the app or `./mvnw test` to find out if a name is wrong.
+> Like 5: the worker at the warehouse counter. Say exactly what you want, and they fetch it.
+
+### Records and DTOs
+A `record` is a one-line class that just holds data. A DTO (data transfer object) is a class whose only job is to be sent as JSON. Field names become JSON keys, so a typo like `inidcators` compiles fine but breaks the frontend. Always compare field names against the contract.
+> Like 5: a labelled lunchbox. The labels must match what the person opening it expects to find.
 
 ### Computed vs. stored data
 Measurements are **stored** in the database. Status and alerts are **computed** from those measurements on each request. Computed data can never fall out of date or contradict the measurements, and there's no extra table to maintain. The cost is a bit of work on every request, which is fine at our size.
