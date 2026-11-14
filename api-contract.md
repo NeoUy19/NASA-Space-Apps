@@ -4,7 +4,7 @@ Base URL: `http://localhost:8080`
 
 JSON fields are camelCase. Timestamps are ISO 8601 UTC (`2026-11-14T08:30:00Z`).
 Status values: `NORMAL`, `CAUTION`, `ALERT`, plus `NO_DATA` when there are no measurements yet.
-Body systems: `CARDIOVASCULAR`, `RESPIRATORY`, `THERMOREGULATION`, `SLEEP`, `BEHAVIORAL`.
+Body systems: `CARDIOVASCULAR`, `RESPIRATORY`, `THERMOREGULATION`, `SLEEP`, `BEHAVIORAL`, `COGNITIVE`.
 Escalation levels: `SELF_CARE`, `CREW_MEDICAL_OFFICER`, `FLIGHT_SURGEON`.
 
 **Errors**

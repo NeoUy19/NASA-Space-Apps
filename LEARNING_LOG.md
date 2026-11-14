@@ -21,7 +21,7 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 | `api-contract.md` comes before endpoint code | All three of us can build against the same JSON shapes at the same time. |
 | CORS allowed only for `http://localhost:5173` on `/api/**` | Allow just our frontend, nothing wider. Add the Azure URL when we deploy. See [CORS](#cors). |
 | Numeric IDs and one error shape `{ "error": "..." }` | Numbers are the JPA default. One error shape means the frontend handles errors in one place. |
-| Five body systems: `CARDIOVASCULAR`, `RESPIRATORY`, `THERMOREGULATION`, `SLEEP`, `BEHAVIORAL` | One per indicator group, and each maps to a body-figure region. Bone, muscle and vision are pitched as future work, because a quick check-in can't measure them. |
+| Six body systems: `CARDIOVASCULAR`, `RESPIRATORY`, `THERMOREGULATION`, `SLEEP`, `BEHAVIORAL`, `COGNITIVE` | One per indicator group, and each maps to a body-figure region. `COGNITIVE` covers a reaction-time test. Bone, muscle and vision are pitched as future work, because a quick check-in can't measure them. |
 | Status values `NORMAL`, `CAUTION`, `ALERT` | A small fixed set that maps straight onto the body-figure colors. |
 | Range fields can be `null`, and assessment falls back to the baseline | NASA publishes no fixed ranges for our indicators, and we never invent thresholds. See [Baseline vs. fixed ranges](#baseline-vs-fixed-ranges). |
 | `/status` always returns every body system, using `NO_DATA` for systems not measured yet | The body figure can draw every region without special cases. Unmeasured regions show gray. |
@@ -32,6 +32,7 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 ### 2026-11-14: API contract, part 2
 - Added `GET /api/crew/{id}/measurements`, `GET /api/crew/{id}/status` and `GET /api/crew/{id}/alerts`. All six endpoints are now in the contract.
 - Range fields are now nullable, following Adi's finding that NASA gives no fixed ranges.
+- Team decision: six body systems, including `COGNITIVE`, which matches Carl's `BodySystem` enum.
 - Concepts: [Path vs. query parameters](#path-vs-query-parameters), [Nullable fields](#nullable-fields), [Computed vs. stored data](#computed-vs-stored-data)
 
 ### 2026-11-14: Health content for all indicators
