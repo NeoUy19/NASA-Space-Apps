@@ -24,6 +24,10 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Team TODO list
+- Added `TODO.md` with tasks per person, ordered so `api-contract.md` comes first, because it unblocks everyone.
+- Concepts: [Unblocking work](#unblocking-work)
+
 ### 2026-11-14: Commit rule added to CLAUDE.md
 - Claude explains the key concepts like you're 5 and updates this log before every commit, for the whole team.
 - Concepts: [New commit vs. amend](#new-commit-vs-amend)
@@ -76,6 +80,10 @@ Inside `return ( ... )` is JSX, the HTML-like markup for the screen. Hooks and o
 
 ### Long-running servers
 `./mvnw spring-boot:run` and `npm run dev` keep running and don't give the terminal back. Use separate terminals for the backend, the frontend, and commands like curl or git. Press `Ctrl + C` to stop a server.
+
+### Unblocking work
+On a team, do first whatever other people are waiting on. The API contract comes first, because Carl's endpoints and Adi's mock data both depend on its JSON shapes. While it's being written, each person picks tasks that don't depend on it (entities, health content).
+> Like 5: before anyone builds Lego, agree on what the picture on the box looks like.
 
 ### New commit vs. amend
 `git commit --amend` rewrites your last commit. That's fine before you push. Once a commit is pushed, teammates may already have it, and rewriting it forces everyone to untangle the history. After a push, make a new commit instead.
