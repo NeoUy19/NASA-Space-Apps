@@ -18,8 +18,20 @@ public class CrewMember {
 
     protected CrewMember() { }   // JPA needs an empty constructor
 
-    public CrewMember(String name /*, role */) {
+    public CrewMember(String name, String role) {
+        this.role = role;
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }
