@@ -25,9 +25,15 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 | Status values `NORMAL`, `CAUTION`, `ALERT` | A small fixed set that maps straight onto the body-figure colors. |
 | Range fields can be `null`, and assessment falls back to the baseline | NASA publishes no fixed ranges for our indicators, and we never invent thresholds. See [Baseline vs. fixed ranges](#baseline-vs-fixed-ranges). |
 | `/status` always returns every body system, using `NO_DATA` for systems not measured yet | The body figure can draw every region without special cases. Unmeasured regions show gray. |
+| CAUTION above 2 and ALERT above 3 standard deviations from the person's own baseline | NASA gives no fixed ranges, and we don't invent medical thresholds. This rule is statistical ("unusual for you"), not medical, so the UI says "unusual compared with your recent readings," not "dangerous." |
 | Escalation levels `SELF_CARE`, `CREW_MEDICAL_OFFICER`, `FLIGHT_SURGEON` | These match the three guidance tiers in the core loop. |
 
 ## Progress
+
+### 2026-11-14: Assessment rules
+- `service/AssessmentRules`: `mean`, `standardDeviation`, and `classify(latest, history)`, which returns a status, the baseline and a plain-language reason.
+- Rules: fewer than 5 past readings means NORMAL while the baseline builds. Otherwise, more than 2 standard deviations from the person's own average is CAUTION, and more than 3 is ALERT. If past readings never vary, any change is CAUTION.
+- Concepts: [Standard deviation](#standard-deviation), [Pure functions](#pure-functions), [Edge cases](#edge-cases)
 
 ### 2026-11-14: Assessment building blocks
 - `MeasurementRepository` query for one crew member's readings of one indicator since a given time.
@@ -121,6 +127,18 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Nullable fields
 `null` means "no value." Carl's entity uses `Double`, which can be `null`, instead of `double`, which can't, so a missing range is stored as "unknown" rather than a fake `0`.
 > Like 5: an empty box is not the same as a box with a zero in it.
+
+### Standard deviation
+The average says what's normal for you. The standard deviation says how much you usually wobble around it. To get it, take each reading minus the average, square it, average those squares, then take the square root. "3 standard deviations away" means three times further than your usual wobble.
+> Like 5: if you always sleep about 7 hours, give or take half an hour, then 5 hours is 4 half-hours away. That's very unusual for *you*.
+
+### Pure functions
+`classify` takes numbers in and gives a result back. It doesn't touch the database or the network. That makes it easy to test, and it works with no connection at all, which is the core of the Mars pitch.
+> Like 5: a calculator. Same buttons, same answer, every time, even with the Wi-Fi off.
+
+### Edge cases
+These are the unusual inputs that break naive code. Here they were: too few readings, and readings that never vary (wobble = 0). Dividing by zero with doubles doesn't crash in Java. It silently gives "infinity," which turned a small mood change into ALERT. Test edge cases on purpose.
+> Like 5: checking your boat floats in the bath and in the waves, not just in the bath.
 
 ### Repositories and derived queries
 A repository is an interface that talks to the database for you. Spring writes the code behind it. Name a method like `findByCrewMemberIdAndIndicatorIdAndTimestampAfterOrderByTimestampAsc`, and Spring turns the name into a query. The compiler doesn't check the name, but Spring does at startup, so run the app or `./mvnw test` to find out if a name is wrong.
