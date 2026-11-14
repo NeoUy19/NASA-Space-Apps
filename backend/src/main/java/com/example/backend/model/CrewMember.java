@@ -14,7 +14,6 @@ public class CrewMember {
     private String name;
     private String role;
 
-    
     protected CrewMember() { }   // JPA needs an empty constructor
 
     public CrewMember(String name, String role) {
