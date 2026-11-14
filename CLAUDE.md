@@ -71,6 +71,7 @@ based on NASA's Spaceflight Standard Measures.
 - JSON fields in camelCase. Timestamps as ISO 8601 strings in UTC.
 - Status values: `NORMAL`, `CAUTION`, `ALERT`.
 - `api-contract.md` is the source of truth. Update it before changing an endpoint.
+- Before every commit, explain the key concepts used in the change like I'm 5 (a few sentences, everyday analogy), then add a dated entry to `LEARNING_LOG.md` (progress, plus any new concepts or design decisions) so it's part of the commit.
 - Short-lived branches, merge to main every couple of hours.
 - Don't commit `.idea/`, `.vscode/`, `node_modules/`, `target/`, or `.env`.
 - Don't reformat whole files. Change only the lines being edited.
