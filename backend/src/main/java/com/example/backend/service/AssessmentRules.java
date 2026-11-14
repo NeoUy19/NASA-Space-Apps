@@ -35,7 +35,7 @@ public class AssessmentRules {
             else {
                 status = Status.CAUTION;
             }
-            return new Result (status,avg, (latestVal == avg ? "Same as your usal reading of " + String.format("%.1f",avg) :  String.format("%.1f",avg) + " is your usual reading, today is " + String.format("%.1f",latestVal)));
+            return new Result (status,avg, (latestVal == avg ? "Same as your usual reading of " + String.format("%.1f",avg) :  String.format("%.1f",avg) + " is your usual reading, today is " + String.format("%.1f",latestVal)));
         }
         double stdFromAvg = Math.abs(avg - latestVal)/std;
         if (stdFromAvg > 3){

@@ -30,6 +30,10 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Tests for the assessment rules
+- `AssessmentRulesTest`: 8 JUnit tests covering mean, standard deviation, NORMAL, CAUTION and ALERT, too few readings, and the never-varies cases. Run them with `cd backend && ./mvnw test`.
+- Concepts: [Unit tests](#unit-tests), [src/main vs. src/test](#srcmain-vs-srctest)
+
 ### 2026-11-14: Assessment rules
 - `service/AssessmentRules`: `mean`, `standardDeviation`, and `classify(latest, history)`, which returns a status, the baseline and a plain-language reason.
 - Rules: fewer than 5 past readings means NORMAL while the baseline builds. Otherwise, more than 2 standard deviations from the person's own average is CAUTION, and more than 3 is ALERT. If past readings never vary, any change is CAUTION.
@@ -127,6 +131,13 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Nullable fields
 `null` means "no value." Carl's entity uses `Double`, which can be `null`, instead of `double`, which can't, so a missing range is stored as "unknown" rather than a fake `0`.
 > Like 5: an empty box is not the same as a box with a zero in it.
+
+### Unit tests
+A unit test runs one small piece of code with known inputs and checks the answer with `assertEquals(expected, actual)`. Each test follows three steps: set up, run, check. Name tests after the behavior (`betweenTwoAndThreeStandardDeviationsIsCaution`), so a failure tells you what broke. Pick inputs with easy numbers (an average of 97 and a wobble of exactly 1) so you can check the expected answer in your head.
+> Like 5: a robot that rechecks your homework every time you change it.
+
+### src/main vs. src/test
+`src/main` is the real app. `src/test` holds tests, in the same folder and package layout. Test tools like JUnit are test-only dependencies, so code in `src/main` can't import them, and tests never ship with the app.
 
 ### Standard deviation
 The average says what's normal for you. The standard deviation says how much you usually wobble around it. To get it, take each reading minus the average, square it, average those squares, then take the square root. "3 standard deviations away" means three times further than your usual wobble.
