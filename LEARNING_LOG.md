@@ -26,6 +26,10 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Line endings
+- Added a root `.gitattributes` with `* text=auto`, so Windows (Carl) and macOS commits don't fight over line endings.
+- Concepts: [Line endings (CRLF vs. LF)](#line-endings-crlf-vs-lf)
+
 ### 2026-11-14: API contract, part 1
 - `api-contract.md` with shared conventions, the error format, `GET /api/indicators` and `POST /api/measurements`. Range values are placeholders until Adi adds sources.
 - Concepts: [API and contract](#api-and-contract), [GET vs. POST](#get-vs-post), [Markdown gotchas](#markdown-gotchas)
@@ -97,6 +101,10 @@ GET reads and never changes anything; its inputs go in the URL (`?indicator=2`),
 
 ### Markdown gotchas
 Code blocks need three backticks (`` ``` ``), not `'''` or one `` ` ``. A `---` directly under a line of text turns that line into a heading, so leave a blank line above it. Headings need a space after the `#`.
+
+### Line endings (CRLF vs. LF)
+Every line of text ends with invisible characters. Windows uses CRLF (`\r\n`), and macOS and Linux use LF (`\n`). If they get mixed, Git thinks every line changed. `* text=auto` in `.gitattributes` makes Git store LF in the repo and convert to each computer's native ending on checkout. `mvnw` is forced to LF and `.cmd` files to CRLF, because shell and Windows scripts need those to run.
+> Like 5: Windows puts two full stops at the end of each sentence, and Mac puts one. Git quietly fixes them, so nobody's essay looks rewritten.
 
 ### Unblocking work
 On a team, do first whatever other people are waiting on. The API contract comes first, because Carl's endpoints and Adi's mock data both depend on its JSON shapes. While it's being written, each person picks tasks that don't depend on it (entities, health content).
