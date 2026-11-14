@@ -35,7 +35,7 @@ public class IndicatorDefinition {
     @Column(length = 1000)
     private String relatedHazard;
 
-    @Column(length = 500)
+    @Column(length = 1000)
     private String source;        // NASA or space-agency citation
 
     protected IndicatorDefinition() { }

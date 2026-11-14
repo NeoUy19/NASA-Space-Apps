@@ -14,8 +14,6 @@ public class CrewMember {
     private String name;
     private String role;
 
-    // TODO: baseline values, once you've decided how to store them
-
     protected CrewMember() { }   // JPA needs an empty constructor
 
     public CrewMember(String name, String role) {
