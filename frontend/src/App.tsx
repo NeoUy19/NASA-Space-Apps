@@ -2,11 +2,20 @@ import { useState } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
+import { useEffect } from 'react'
 import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [status, setStatus] = useState<string>("checking...")
 
+
+  useEffect(() => {
+        fetch("http://localhost:8080/api/health")
+        .then(r => r.json())
+        .then(data => setStatus(data.status))
+        .catch(()=> setStatus("backend unreachable"))
+      },[])
   return (
     <>
       <section id="center">
@@ -16,7 +25,7 @@ function App() {
           <img src={viteLogo} className="vite" alt="Vite logo" />
         </div>
         <div>
-          <h1>Get started</h1>
+          <h1>backend: {status}</h1>
           <p>
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
           </p>
