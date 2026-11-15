@@ -1,9 +1,12 @@
+import CheckIn from './screens/CheckIn'
 import { useState } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import { useEffect } from 'react'
 import './App.css'
+
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -26,6 +29,7 @@ function App() {
         </div>
         <div>
           <h1>backend: {status}</h1>
+          <CheckIn />
           <p>
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
           </p>
