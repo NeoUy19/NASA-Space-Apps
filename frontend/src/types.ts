@@ -39,3 +39,38 @@ export type Measurement = NewMeasurement & {
     id: number;
     timestamp: string;          //This is always returned from the backend
 };
+
+export type Status = 
+    |"NORMAL"
+    |"CAUTION"
+    |"ALERT"
+    |"NO_DATA";
+
+export type EscalationLevel = 
+    |"SELF_CARE"
+    |"CREW_MEDICAL_OFFICER"
+    |"FLIGHT_SURGEON";
+
+export type IndicatorStatus = {
+    indicatorId: number;
+    latestValue: number;
+    baseline: number | null;
+    measuredAt: string;
+    status: Status;
+}
+
+export type BodySystemStatus = {
+    bodySystem: BodySystem;
+    status: Status;
+    reason: string | null;
+    recommendedAction: string|null;
+    escalationLevel: EscalationLevel | null;
+    indicators: IndicatorStatus[];
+}
+
+export type StatusResponse = {
+    crewMemberId: number;
+    assessedAt:string;
+    overallStatus: Status;
+    bodySystems: BodySystemStatus[];
+}

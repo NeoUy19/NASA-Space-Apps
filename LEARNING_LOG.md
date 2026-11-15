@@ -30,6 +30,21 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Clickable body figure and detail panel
+- Clicking a body part selects its system (`useState`). A side panel shows its status (in color), the reason, the next step from the escalation level, and each indicator's latest value against the person's usual.
+- `NO_DATA` systems say "No measurements yet". A null baseline says "still building your baseline".
+- Every panel says "Simulated data. Decision support only, not a diagnosis."
+- Indicator names come from `mocks/indicators.ts` for now. Swap in `GET /api/indicators` once it exists.
+- Concepts: [State and re-rendering](#state-and-re-rendering), [Event handlers](#event-handlers), [Conditional rendering](#conditional-rendering)
+
+### 2026-11-14: Body figure, first version
+- Added `components/BodyFigure.tsx`: an SVG body where each part is colored by its body system's status. The body outline is thermoregulation, the lungs respiratory, the heart cardiovascular, the brain cognitive, the eyes sleep, and the mouth behavioral.
+- Added `StatusResponse` types to `types.ts` (with `| null` where the backend can send null), and simulated data in `mocks/status.ts` with every status, so every color shows.
+- Icons come from SVG Repo. We removed their hardcoded colors so `fill` can be set from the status. Removed the leftover Vite template from `App.tsx`.
+- Decision: a 2D figure with flat icons, not 3D. It's clearer on a projector and much faster to build.
+- To do: make the parts clickable and show a detail panel. Add icon licenses to the credits.
+- Concepts: [SVG viewBox](#svg-viewbox), [Nested SVG](#nested-svg), [Props](#props), [Optional values in TypeScript](#optional-values-in-typescript)
+
 ### 2026-11-14: Status endpoint
 - Added `StatusController`: `GET /api/crew/{id}/status` passes the request straight to `AssessmentService.assess(id)`. It returns all 6 body systems (`NO_DATA` until measurements are seeded), and a 404 for an unknown crew member.
 - To do: error bodies are Spring's default, not the contract's `{ "error": "..." }`. A global `@RestControllerAdvice` handler can fix that later.
@@ -150,6 +165,34 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### State and re-rendering
+`const [selected, setSelected] = useState(null)` gives a component memory. Calling `setSelected(...)` stores a new value and makes React run the component again, so the screen matches the new value.
+> Like 5: the component's memory. When it remembers something new, it redraws its picture.
+
+### Event handlers
+`onClick={() => setSelected("RESPIRATORY")}` passes a function to run later, on click. Writing `onClick={setSelected("RESPIRATORY")}` would run it immediately, while drawing.
+> Like 5: a sticky note that says "when tapped, do this," instead of doing it right now.
+
+### Conditional rendering
+Show different JSX depending on the data: early `return`s in a helper function, `cond ? A : B`, or `cond && A` (show A only if cond is true).
+> Like 5: a choose-your-own-adventure book. Which page you see depends on what you picked.
+
+### SVG viewBox
+`viewBox="minX minY width height"` sets the coordinate grid that the shapes are drawn in. The browser scales that grid to fit the element on screen. Changing the numbers crops or zooms without moving any shapes.
+> Like 5: a camera. The drawing stays put, and you choose where to point the camera and how much to zoom.
+
+### Nested SVG
+An `<svg>` inside an `<svg>` gets its own `viewBox`, so an icon drawn on a 512 grid can sit in a 16×16 box on a 200×400 canvas. `x`, `y`, `width` and `height` place the box (`x` and `y` are the top-left corner). Shapes later in the code are drawn on top.
+> Like 5: a picture frame. Each picture keeps its own size inside, and you only choose where to hang the frame.
+
+### Props
+A React component receives data through props, for example `<BodyFigure status={mockStatus} />`. The component only reads them, and the parent decides what to pass. Swapping the mock for real API data later only changes the parent.
+> Like 5: a lunchbox someone hands you. You eat what's inside, and you don't pack it yourself.
+
+### Optional values in TypeScript
+`.find()` returns the item or `undefined`. Checking `if (entry)` narrows the type, so inside the `if` TypeScript knows `entry` exists. `number | null` in a type forces you to handle the missing case.
+> Like 5: before you open a box, check that there's a box.
 
 ### Controller vs. service
 The controller handles HTTP: the URL, `@PathVariable`, and turning the result into JSON. The service holds the logic. Keeping controllers thin means the logic can be tested and reused without a web request.
