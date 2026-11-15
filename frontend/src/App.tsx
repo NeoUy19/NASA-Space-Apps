@@ -34,12 +34,8 @@ function App() {
             </label>
           <CheckIn crewId={crewId} onSaved={() => setRefreshKey(k => k + 1)} />
           <Guidance />
-<<<<<<< HEAD
           <StatusScreen crewId={crewId} refreshKey={refreshKey} />
-=======
-          <StatusScreen />
           <TrendChart />
->>>>>>> origin/main
           <p>
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
           </p>
