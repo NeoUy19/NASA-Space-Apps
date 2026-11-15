@@ -2,6 +2,11 @@
 // This file doesn't do anything when the app runs. It describes what our data should look like
 // so TypeScript can catch mistakes while we type
 
+export type CrewMember = {
+    id: number; 
+    name: string; 
+    role: string
+}
 
 export type BodySystem =
     | "CARDIOVASCULAR"          // "|" means "or"

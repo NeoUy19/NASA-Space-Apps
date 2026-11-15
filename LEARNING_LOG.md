@@ -30,6 +30,12 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Crew dropdown from the backend
+- The crew dropdown now loads from Carl's `GET /api/crew` instead of three hardcoded options. It shows each name and role, still labeled "(simulated)".
+- Added a `CrewMember` type to `types.ts`.
+- Gotcha: the endpoint first returned 404 because the running backend had started before pulling Carl's controller. Restart the backend after pulling backend changes.
+- Concepts: [Data-driven UI](#data-driven-ui)
+
 ### 2026-11-15: "Your usual" line on the trend chart
 - The trend chart draws a dashed `ReferenceLine` at the person's baseline (from `/status`), so you can see at a glance when a reading is unusual *for them*. For example, crew 1's SpO2 sits around 97, and today's 92 drops well below the line.
 - `TrendChart` gets `status` as a prop (it can be `null` while loading), and finds the baseline with `flatMap` + `find`. No line is drawn when the baseline is still being built.
@@ -216,6 +222,10 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Data-driven UI
+Build lists from fetched data with `.map()`, instead of writing each item by hand. When the data changes (a new crew member), the UI updates without a code change.
+> Like 5: asking the office for today's class list instead of writing names on the door by hand.
 
 ### flatMap
 `list.flatMap(x => x.items)` turns a list of lists into one flat list. Here, all indicators across all body systems, so `.find()` can search them at once.
