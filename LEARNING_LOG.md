@@ -25,6 +25,7 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 | Status values `NORMAL`, `CAUTION`, `ALERT` | A small fixed set that maps straight onto the body-figure colors. |
 | Range fields can be `null`, and assessment falls back to the baseline | NASA publishes no fixed ranges for our indicators, and we never invent thresholds. See [Baseline vs. fixed ranges](#baseline-vs-fixed-ranges). |
 | `/status` always returns every body system, using `NO_DATA` for systems not measured yet | The body figure can draw every region without special cases. Unmeasured regions show gray. |
+| CAUTION above 2 and ALERT above 3 standard deviations from the person's own baseline | NASA gives no fixed ranges, and we don't invent medical thresholds. This rule is statistical ("unusual for you"), not medical, so the UI says "unusual compared with your recent readings," not "dangerous." |
 | Escalation levels `SELF_CARE`, `CREW_MEDICAL_OFFICER`, `FLIGHT_SURGEON` | These match the three guidance tiers in the core loop. |
 
 ## Progress
@@ -33,6 +34,20 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 - Added `screens/CheckIn.tsx`: one input per indicator, builds `POST /api/measurements` bodies on submit (logged for now, not sent yet).
 - Blocks impossible values (negatives, SpO2 over 100, sleep over 24 h, mood outside 1–5). Health thresholds stay in the assessment service.
 - Concepts: [Controlled inputs](#controlled-inputs)
+
+### 2026-11-14: Assessment service
+- `AssessmentService.assess(crewMemberId)` builds the full `/status` response. It covers a 404 for an unknown crew member, a 14-day window, each indicator assessed against its own history, the worst indicator per body system, escalation, and an overall status.
+- Decision: `NORMAL` and `CAUTION` map to `SELF_CARE`, and `ALERT` maps to `CREW_MEDICAL_OFFICER`. `FLIGHT_SURGEON` is reserved for persistent alerts. The contract was updated to match.
+- Concepts: [Dependency injection](#dependency-injection), [Variable scope](#variable-scope), [Comparing enums](#comparing-enums)
+
+### 2026-11-14: Tests for the assessment rules
+- `AssessmentRulesTest`: 8 JUnit tests covering mean, standard deviation, NORMAL, CAUTION and ALERT, too few readings, and the never-varies cases. Run them with `cd backend && ./mvnw test`.
+- Concepts: [Unit tests](#unit-tests), [src/main vs. src/test](#srcmain-vs-srctest)
+
+### 2026-11-14: Assessment rules
+- `service/AssessmentRules`: `mean`, `standardDeviation`, and `classify(latest, history)`, which returns a status, the baseline and a plain-language reason.
+- Rules: fewer than 5 past readings means NORMAL while the baseline builds. Otherwise, more than 2 standard deviations from the person's own average is CAUTION, and more than 3 is ALERT. If past readings never vary, any change is CAUTION.
+- Concepts: [Standard deviation](#standard-deviation), [Pure functions](#pure-functions), [Edge cases](#edge-cases)
 
 ### 2026-11-14: Assessment building blocks
 - `MeasurementRepository` query for one crew member's readings of one indicator since a given time.
@@ -126,6 +141,36 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Nullable fields
 `null` means "no value." Carl's entity uses `Double`, which can be `null`, instead of `double`, which can't, so a missing range is stored as "unknown" rather than a fake `0`.
 > Like 5: an empty box is not the same as a box with a zero in it.
+
+### Dependency injection
+A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
+> Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Variable scope
+A variable declared inside `{ }` only exists inside those braces. To set it in an `if`/`else` and use it afterwards, declare it before the `if` and only assign it inside.
+> Like 5: a toy made inside a room stays in that room. If you need it in the hallway, put it in the hallway first.
+
+### Comparing enums
+`a.compareTo(b) > 0` means "a is declared after b." `Status` is declared `NORMAL, CAUTION, ALERT, NO_DATA`, so later means worse, except that `NO_DATA` sits last and needs its own check.
+
+### Unit tests
+A unit test runs one small piece of code with known inputs and checks the answer with `assertEquals(expected, actual)`. Each test follows three steps: set up, run, check. Name tests after the behavior (`betweenTwoAndThreeStandardDeviationsIsCaution`), so a failure tells you what broke. Pick inputs with easy numbers (an average of 97 and a wobble of exactly 1) so you can check the expected answer in your head.
+> Like 5: a robot that rechecks your homework every time you change it.
+
+### src/main vs. src/test
+`src/main` is the real app. `src/test` holds tests, in the same folder and package layout. Test tools like JUnit are test-only dependencies, so code in `src/main` can't import them, and tests never ship with the app.
+
+### Standard deviation
+The average says what's normal for you. The standard deviation says how much you usually wobble around it. To get it, take each reading minus the average, square it, average those squares, then take the square root. "3 standard deviations away" means three times further than your usual wobble.
+> Like 5: if you always sleep about 7 hours, give or take half an hour, then 5 hours is 4 half-hours away. That's very unusual for *you*.
+
+### Pure functions
+`classify` takes numbers in and gives a result back. It doesn't touch the database or the network. That makes it easy to test, and it works with no connection at all, which is the core of the Mars pitch.
+> Like 5: a calculator. Same buttons, same answer, every time, even with the Wi-Fi off.
+
+### Edge cases
+These are the unusual inputs that break naive code. Here they were: too few readings, and readings that never vary (wobble = 0). Dividing by zero with doubles doesn't crash in Java. It silently gives "infinity," which turned a small mood change into ALERT. Test edge cases on purpose.
+> Like 5: checking your boat floats in the bath and in the waves, not just in the bath.
 
 ### Repositories and derived queries
 A repository is an interface that talks to the database for you. Spring writes the code behind it. Name a method like `findByCrewMemberIdAndIndicatorIdAndTimestampAfterOrderByTimestampAsc`, and Spring turns the name into a query. The compiler doesn't check the name, but Spring does at startup, so run the app or `./mvnw test` to find out if a name is wrong.
