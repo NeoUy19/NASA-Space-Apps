@@ -47,7 +47,7 @@ function App() {
           <BodyFigure status={crewStatus} />
           </>
             ) : <p>Loading...</p>}
-            <TrendChart crewId={crewId} refreshKey={refreshKey} />
+            <TrendChart crewId={crewId} refreshKey={refreshKey} status={crewStatus} />
           <p>
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
           </p>
