@@ -30,6 +30,12 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Body figure on real data
+- Added `screens/StatusScreen.tsx`: a crew dropdown (1 to 3, labeled simulated) that fetches `GET /api/crew/{id}/status` and passes it to `BodyFigure`. `App.tsx` renders `StatusScreen` instead of the mock.
+- Milestone: the core loop runs end to end: seeded data → assessment → API → colored body figure.
+- `BodyFigure` didn't change, because it only receives data through props. `mocks/status.ts` stays for Adi's screens.
+- Concepts: [useEffect dependencies](#useeffect-dependencies), [Container and display components](#container-and-display-components), [Template strings](#template-strings)
+
 ### 2026-11-15: Simulated measurements
 - Added `MeasurementSeeder.java`: 14 days of simulated readings for every crew member and indicator, so `/status` shows real statuses instead of `NO_DATA`.
 - The story for the demo: crew 1 has SpO2 ALERT and heart rate CAUTION today, crew 2 is all normal, and crew 3 has sleep CAUTION.
@@ -175,6 +181,18 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### useEffect dependencies
+The array at the end of `useEffect` says when to run it again. `[]` means once, when the component first appears. `[crewId]` means again every time `crewId` changes.
+> Like 5: a doorbell wired to the dropdown. Every new pick rings it, and it fetches fresh data.
+
+### Container and display components
+`StatusScreen` gets the data (state, fetch, dropdown), and `BodyFigure` only draws whatever it receives. Swapping mock data for real data only changed the container.
+> Like 5: a cable box and a TV. The box fetches the channel, and the TV just shows what it's given.
+
+### Template strings
+Backticks let you put values into text: `` `crew/${crewId}/status` ``. Regular quotes print `${crewId}` literally.
+> Like 5: fill-in-the-blank text.
 
 ### Seed data
 Code that fills the database at startup with demo data. H2 is in memory, so it reseeds on every restart. `if (repo.count() > 0) return;` stops it seeding twice.

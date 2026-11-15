@@ -1,4 +1,4 @@
-import type { Measurement } from '../types/measurement'
+import type { Measurement } from '../types'
 
 // Simulated data in the shape of GET api/crew/{id}/measurements response
 // 14 days of daily readings for crew member 1. NOT REAL ASTRONAUT DATA. This is just for testing the UI.
