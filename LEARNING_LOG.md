@@ -30,6 +30,12 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: "Your usual" line on the trend chart
+- The trend chart draws a dashed `ReferenceLine` at the person's baseline (from `/status`), so you can see at a glance when a reading is unusual *for them*. For example, crew 1's SpO2 sits around 97, and today's 92 drops well below the line.
+- `TrendChart` gets `status` as a prop (it can be `null` while loading), and finds the baseline with `flatMap` + `find`. No line is drawn when the baseline is still being built.
+- Bug: the line first sat outside `</LineChart>`, so nothing was drawn. Chart parts must be children of the chart.
+- Concepts: [flatMap](#flatmap)
+
 ### 2026-11-15: Trend chart on real data
 - `TrendChart` now fetches `GET /api/crew/{id}/measurements?indicator=...` (rerunning on `[crewId, indicatorId, refreshKey]`) and `GET /api/indicators` for its dropdown. No more mocks.
 - A check-in now adds a new point to the chart. Every Must-have screen uses real data.
@@ -210,6 +216,10 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### flatMap
+`list.flatMap(x => x.items)` turns a list of lists into one flat list. Here, all indicators across all body systems, so `.find()` can search them at once.
+> Like 5: emptying several small bags of marbles into one big bag.
 
 ### Where state lives
 Put state in the lowest component that needs it. If only `TrendChart` uses the measurements, they live in `TrendChart`. If several components need it (`crewId`, the status), lift it to their shared parent. Passing props: the function line is the blank form (`{ crewId }: { crewId: number }`), and the tag fills it in (`<TrendChart crewId={crewId} />`).

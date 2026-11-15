@@ -1,9 +1,9 @@
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine } from "recharts";
 import { useState, useEffect } from "react";
-import type { Indicator, Measurement } from "../types";
+import type { Indicator, Measurement, StatusResponse } from "../types";
 
 
-function TrendChart({ crewId, refreshKey }: { crewId: number; refreshKey: number }) {
+function TrendChart({ crewId, refreshKey, status}  : { crewId: number; refreshKey: number; status: StatusResponse | null }) {
     const [indicatorId, setIndicatorId] = useState(1); // heart rate for now, a dropdown comes in step 2
     const [indicators, setIndicators] = useState<Indicator[]>([])
     const [measurements, setMeasurements] = useState<Measurement[]>([])
@@ -33,6 +33,10 @@ function TrendChart({ crewId, refreshKey }: { crewId: number; refreshKey: number
             value: m.value
         }));
 
+    const baseline = status?.bodySystems
+    .flatMap((b) => b.indicators)
+    .find((i) => i.indicatorId === indicatorId)?.baseline;
+
     return (
         <div>
             <p>Simulated data</p>
@@ -52,6 +56,9 @@ function TrendChart({ crewId, refreshKey }: { crewId: number; refreshKey: number
                     <YAxis domain={["auto", "auto"]} />
                     <Tooltip />
                     <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                    {baseline != null && (
+                <ReferenceLine y={baseline} stroke="gray" strokeDasharray="4 4" label="your average" />
+)}
                 </LineChart>
             </ResponsiveContainer>
         </div>
