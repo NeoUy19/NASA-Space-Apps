@@ -30,6 +30,16 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Simulated measurements
+- Added `MeasurementSeeder.java`: 14 days of simulated readings for every crew member and indicator, so `/status` shows real statuses instead of `NO_DATA`.
+- The story for the demo: crew 1 has SpO2 ALERT and heart rate CAUTION today, crew 2 is all normal, and crew 3 has sleep CAUTION.
+- Today's readings sit exactly at the usual value (except for the story values). With random wobble, healthy crew members got surprise CAUTIONs.
+- The usual values and wobbles only generate fake data. They aren't medical thresholds.
+- Added `@Order(1)` to `DataSeeder` and `@Order(2)` to `MeasurementSeeder`, so the crew and indicators exist first.
+- Found a design issue: the rule flags good changes too (a better mood is shown as CAUTION). Added to TODO as a team decision.
+- Updated TODO.md with everyone's progress.
+- Concepts: [Seed data](#seed-data), [Fixed random seed](#fixed-random-seed), [Runner order](#runner-order)
+
 ### 2026-11-14: Clickable body figure and detail panel
 - Clicking a body part selects its system (`useState`). A side panel shows its status (in color), the reason, the next step from the escalation level, and each indicator's latest value against the person's usual.
 - `NO_DATA` systems say "No measurements yet". A null baseline says "still building your baseline".
@@ -165,6 +175,18 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Seed data
+Code that fills the database at startup with demo data. H2 is in memory, so it reseeds on every restart. `if (repo.count() > 0) return;` stops it seeding twice.
+> Like 5: stocking a pretend shop before opening day, so customers have something to look at.
+
+### Fixed random seed
+`new Random(42)` gives the same "random" numbers on every run. `nextGaussian()` gives values that are mostly close to 0 and rarely far, like real day-to-day wobble.
+> Like 5: shuffling a deck exactly the same way every time. It looks random, but every rehearsal gets the same cards.
+
+### Runner order
+Every `CommandLineRunner` runs at startup. `@Order(n)` sets the order, and lower runs first. A runner without `@Order` runs last.
+> Like 5: a line for the slide. Number 1 goes first.
 
 ### State and re-rendering
 `const [selected, setSelected] = useState(null)` gives a component memory. Calling `setSelected(...)` stores a new value and makes React run the component again, so the screen matches the new value.

@@ -7,9 +7,11 @@ import com.example.backend.repository.CrewMemberRepository;
 import com.example.backend.repository.IndicatorDefinitionRepository;
 import com.example.backend.repository.MeasurementRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(1)
 public class DataSeeder implements CommandLineRunner {
 
     private final CrewMemberRepository crewMemberRepository;
