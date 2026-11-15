@@ -1,13 +1,32 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import { mockMeasurements } from "../mocks/measurements";
-import { useState } from "react";
-import { mockIndicators } from "../mocks/indicators";
+import { useState, useEffect } from "react";
+import type { Indicator, Measurement } from "../types";
 
-function TrendChart() {
+
+function TrendChart({ crewId, refreshKey }: { crewId: number; refreshKey: number }) {
     const [indicatorId, setIndicatorId] = useState(1); // heart rate for now, a dropdown comes in step 2
+    const [indicators, setIndicators] = useState<Indicator[]>([])
+    const [measurements, setMeasurements] = useState<Measurement[]>([])
+    
+    // This person's readings for the chosen indicator. Reruns when the crew member,
+    // the indicator, or a new check-in (refreshKey) changes.
+    useEffect(() => {
+        fetch(`http://localhost:8080/api/crew/${crewId}/measurements?indicator=${indicatorId}`)
+        .then(r => r.json())
+        .then(data => setMeasurements(data))
+        .catch(() => setMeasurements([]))
+    }, [crewId, indicatorId, refreshKey])
 
+    // The indicator list for the dropdown. Only needed once.
+    useEffect(() => {
+        fetch("http://localhost:8080/api/indicators")
+        .then(r => r.json())
+        .then(data => setIndicators(data))
+        .catch(() => setIndicators([]))
+    }, [])
+      
     // 1. Keep only the measurements for this indicator
-    const chartData = mockMeasurements
+    const chartData = measurements
         .filter((m) => m.indicatorId === indicatorId)
         .map((m) => ({
             date: new Date(m.timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
@@ -19,7 +38,7 @@ function TrendChart() {
             <p>Simulated data</p>
             <h2>Trends</h2>
             <select value={indicatorId} onChange={(e) => setIndicatorId(Number(e.target.value))}>
-                {mockIndicators.map((indicator) => (
+                {indicators.map((indicator) => (
                     <option key={indicator.id} value={indicator.id}>
                         {indicator.name} ({indicator.unit})
                     </option>

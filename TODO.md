@@ -26,7 +26,9 @@ Work on a short-lived branch and merge to `main` every couple of hours.
 - [ ] **Must:** wire Adi's screens to the real endpoints (body figure → `/status`, check-in → `POST /measurements`, indicators → `GET /indicators`).
   - [x] Body figure → `/status`, with a crew dropdown (`screens/StatusScreen.tsx`).
   - [x] Check-in → `POST /measurements` and indicators → `GET /indicators`. A check-in now refreshes the body figure.
-  - [ ] Guidance screen → real `/status` (it still reads `mockStatus`). Idea: `App` fetches `/status` once and passes it to both `StatusScreen` and `Guidance`.
+  - [x] Guidance screen → real `/status`. `App` fetches it once and passes it to `BodyFigure` and `Guidance`.
+  - [x] Trend chart → real `GET /crew/{id}/measurements` and `GET /indicators`. A check-in adds a point.
+  - [ ] Trend chart: dashed "your usual" baseline line (Recharts `ReferenceLine`, baseline from `/status`).
 - [ ] **Should:** `GET /api/crew/{id}/alerts` (trend-based alerts).
 
 ## Carl (backend)
