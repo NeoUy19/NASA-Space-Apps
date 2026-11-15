@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import './App.css'
 import BodyFigure from './components/BodyFigure'
-import type { StatusResponse } from './types'
+import { type CrewMember, type StatusResponse } from './types'
 
 
 
@@ -14,7 +14,7 @@ function App() {
   const [crewId, setCrewId] = useState<number>(1)
   const [refreshKey, setRefreshKey] = useState<number>(0)
   const [crewStatus, setCrewStatus]=useState<StatusResponse|null>(null)
-  
+  const [crew, setCrew] = useState<CrewMember[]>([])
   useEffect(() => {
           fetch(`http://localhost:8080/api/crew/${crewId}/status`)
           .then(r => r.json())
@@ -27,6 +27,12 @@ function App() {
         .then(data => setStatus(data.status))
         .catch(()=> setStatus("backend unreachable"))
       },[])
+  useEffect(() =>{
+    fetch("http://localhost:8080/api/crew")
+        .then(r => r.json())
+        .then(data => setCrew(data))
+        .catch(()=> setCrew([]))
+  },[])
   return (
     <>
       <section id="center">
@@ -35,9 +41,9 @@ function App() {
           <label >
               Crew member:{" "}
                 <select value={crewId} onChange={(e) => setCrewId(Number(e.target.value))}>
-                    <option value={1}>Crew member 1 (simulated)</option>
-                    <option value={2}>Crew member 2 (simulated)</option>
-                    <option value={3}>Crew member 3 (simulated)</option>
+                    {crew.map((c) => (
+    <option key={c.id} value={c.id}>{c.name}, {c.role} (simulated)</option>
+))}
                 </select>
             </label>
           <CheckIn crewId={crewId} onSaved={() => setRefreshKey(k => k + 1)} />
