@@ -1,5 +1,22 @@
-import type { StatusResponse, Status, BodySystem } from "../types";
+import type { StatusResponse, Status, BodySystem, EscalationLevel } from "../types";
+import {useState} from "react";
+import { mockIndicators } from "../mocks/indicators";
 
+// Friendly names for the panel. The API sends the ALL_CAPS versions.
+const SYSTEM_LABELS: Record<BodySystem, string> = {
+  CARDIOVASCULAR: "Heart and circulation",
+  RESPIRATORY: "Lungs and breathing",
+  THERMOREGULATION: "Body temperature",
+  SLEEP: "Sleep",
+  BEHAVIORAL: "Mood",
+  COGNITIVE: "Thinking and reaction time",
+};
+
+const ESCALATION_LABELS: Record<EscalationLevel, string> = {
+  SELF_CARE: "Self-care: keep monitoring and follow the guidance",
+  CREW_MEDICAL_OFFICER: "Tell your crew medical officer",
+  FLIGHT_SURGEON: "Contact the flight surgeons",
+};
 const STATUS_COLORS: Record<Status, string> = {
   NORMAL: "#61d230",
   CAUTION: "#f3950f",
@@ -8,6 +25,7 @@ const STATUS_COLORS: Record<Status, string> = {
 };
 
 export default function BodyFigure({ status }: { status: StatusResponse }) {
+    const [selected,setSelected] = useState<BodySystem | null > (null);
   function colorFor(system: BodySystem): string {
     const entry = status.bodySystems.find((s) => s.bodySystem === system);
     if (entry) {
@@ -16,9 +34,63 @@ export default function BodyFigure({ status }: { status: StatusResponse }) {
       return STATUS_COLORS.NO_DATA;
     }
   }
+    const detail = status.bodySystems.find((s) => s.bodySystem === selected);
+
+  // Builds the side panel for whatever body part is selected.
+  function renderPanel() {
+    // Case 1: nothing clicked yet (after this line, TypeScript knows detail exists)
+    if (!selected || !detail) {
+      return <p>Click a body part to see how that system is doing.</p>;
+    }
+
+    // Case 2: this system has no measurements
+    if (detail.status === "NO_DATA") {
+      return (
+        <div>
+          <h2>{SYSTEM_LABELS[detail.bodySystem]}</h2>
+          <p style={{ color: STATUS_COLORS.NO_DATA }}>No measurements yet</p>
+          <p>Log a check-in for this system to start building your baseline.</p>
+        </div>
+      );
+    }
+
+    // Case 3: real data
+    return (
+      <div>
+        <h2>{SYSTEM_LABELS[detail.bodySystem]}</h2>
+        <p style={{ color: STATUS_COLORS[detail.status], fontWeight: "bold" }}>{detail.status}</p>
+        <p>{detail.reason}</p>
+        {detail.escalationLevel && (
+          <p>Next step: {ESCALATION_LABELS[detail.escalationLevel]}</p>
+        )}
+
+        <ul>
+          {detail.indicators.map((i) => {
+            // The status only has an ID, so look up the name and unit.
+            // Mock list for now; this becomes GET /api/indicators later.
+            const def = mockIndicators.find((d) => d.id === i.indicatorId);
+            const name = def?.name ?? `Indicator ${i.indicatorId}`;
+            const unit = def?.unit ?? "";
+            return (
+              <li key={i.indicatorId} style={{ color: STATUS_COLORS[i.status] }}>
+                {name}: {i.latestValue} {unit}
+                {" "}(your usual: {i.baseline ?? "still building your baseline"})
+              </li>
+            );
+          })}
+        </ul>
+
+        <p style={{ fontSize: "0.8em", opacity: 0.7 }}>
+          Simulated data. Decision support only, not a diagnosis.
+        </p>
+      </div>
+    );
+  }
+
   return (
+    <div style={{ display: "flex", gap: 24 }}>
     <svg viewBox="55 95 90 215" width={250}>
-      <svg x={0} y={0} width={200} height={400} viewBox=" 0 0 206.326 206.326">
+      <svg x={0} y={0} width={200} height={400} viewBox=" 0 0 206.326 206.326" onClick={() => setSelected("THERMOREGULATION")} style = {{cursor:"pointer"}}>
         <path
           d="M104.265,117.959c-0.304,3.58,2.126,22.529,3.38,29.959c0.597,3.52,2.234,9.255,1.645,12.3
 			c-0.841,4.244-1.084,9.736-0.621,12.934c0.292,1.942,1.211,10.899-0.104,14.175c-0.688,1.718-1.949,10.522-1.949,10.522
@@ -57,7 +129,7 @@ export default function BodyFigure({ status }: { status: StatusResponse }) {
           strokeWidth={1}
         />
       </svg>
-      <svg x={75.5} y={125} width={50} height={40} viewBox=" 0 0 48 48">
+      <svg x={75.5} y={125} width={50} height={40} viewBox=" 0 0 48 48" onClick={() => setSelected("RESPIRATORY")} style = {{cursor:"pointer"}}>
         <path d="M18.3616 14.4281C17.9857 14.0417 17.4485 13.7416 16.4944 13.7424C16.1761 13.7426 15.718 13.877 15.0999 14.3973C14.4755 14.9229 13.8025 15.7511 13.1201 16.8837C11.7568 19.1464 10.5551 22.2871 9.65261 25.6089C8.75354 28.9179 8.18539 32.2799 8.0308 34.9299C7.9531 36.2619 7.98437 37.343 8.10186 38.1178C8.16054 38.5048 8.23255 38.7589 8.29188 38.9068C8.29797 38.922 8.30354 38.9351 8.30852 38.9463C9.26857 39.6754 10.907 39.9662 12.9417 39.5699C14.9997 39.169 17.0171 38.1377 18.2942 36.862C18.7374 36.4192 19.1338 35.6888 19.4295 34.5998C19.7217 33.5235 19.8777 32.2384 19.9432 30.8381C20.0084 29.4452 19.9818 28.0055 19.9359 26.6304C19.9233 26.2532 19.909 25.8747 19.8948 25.502C19.8589 24.5552 19.8244 23.6453 19.8237 22.8853C19.8235 22.6274 19.8258 22.3542 19.8282 22.0692C19.8421 20.4219 19.8594 18.3795 19.413 16.6049C19.158 15.5912 18.7954 14.8739 18.3616 14.4281ZM8.33561 39.0002C8.33559 39.0003 8.33466 38.9989 8.33292 38.9958C8.33477 38.9986 8.33564 39.0001 8.33561 39.0002ZM21.8287 22.1383C21.8636 18.6096 21.9316 11.7379 16.4927 11.7424C9.04214 11.7485 3.74153 37.7593 6.93685 40.4104C10.1322 43.0615 16.5171 41.464 19.7076 38.2769C22.2835 35.7039 22.0555 29.6964 21.8919 25.3839C21.8566 24.4547 21.8243 23.6041 21.8237 22.8836C21.8236 22.6577 21.826 22.4077 21.8287 22.1383Z" 
         fill={colorFor("RESPIRATORY")}
           fillOpacity={0.25}
@@ -79,7 +151,7 @@ fill={colorFor("RESPIRATORY")}
           stroke={colorFor("RESPIRATORY")}
           strokeWidth={1}/>
       </svg>
-      <svg x={96} y={140} width={16} height={16} viewBox=" 0 0 512 512">
+      <svg x={96} y={140} width={16} height={16} viewBox=" 0 0 512 512" onClick={() => setSelected("CARDIOVASCULAR")} style = {{cursor:"pointer"}}>
         <path
           d="M435.924,97.105c-4.452-7.72-10.798-14.374-16.971-18.044c-4.12-2.479-7.996-3.6-11.311-3.6
 		c-2.652,0.016-5.036,0.615-7.743,2.242c-40.553,24.793-74.005,55.727-98.546,90.127c-24.557,34.392-40.217,72.217-45.427,110.918
@@ -115,7 +187,7 @@ fill={colorFor("RESPIRATORY")}
           strokeWidth={5}
           />
       </svg>
-      <svg x={93} y={102} width={14} height={14} viewBox=" 0 0 256 256">
+      <svg x={93} y={102} width={14} height={14} viewBox=" 0 0 256 256" onClick={() => setSelected("COGNITIVE")} style = {{cursor:"pointer"}}>
         <path
           d="M244,132a52.10391,52.10391,0,0,0-31.99951-48.01416L212,72a43.99041,43.99041,0,0,0-84-18.2959A43.99041,43.99041,0,0,0,44,72l-.00049,11.98584A52.00675,52.00675,0,0,0,44,179.99463V184a43.99041,43.99041,0,0,0,84,18.2959A43.99041,43.99041,0,0,0,212,184v-4.00537A52.07716,52.07716,0,0,0,244,132ZM88,220a36.04061,36.04061,0,0,1-36-36v-1.41309A51.91966,51.91966,0,0,0,64,184h8a4,4,0,0,0,0-8H64A44.00806,44.00806,0,0,1,49.33252,90.50293a4,4,0,0,0,2.6665-3.77148L52,72a36,36,0,0,1,72,0v86.74841A43.96994,43.96994,0,0,0,88,140a4,4,0,0,0,0,8,36,36,0,0,1,0,72Zm104-44h-8a4,4,0,0,0,0,8h8a51.91966,51.91966,0,0,0,12-1.41309V184a36,36,0,1,1-36-36,4,4,0,0,0,0-8,43.96994,43.96994,0,0,0-36,18.74841V72a36,36,0,0,1,72,0l.001,14.73145a4,4,0,0,0,2.6665,3.77148A44.00806,44.00806,0,0,1,192,176ZM92,92a32.036,32.036,0,0,1-32,32,4,4,0,0,1,0-8A24.02718,24.02718,0,0,0,84,92V84a4,4,0,0,1,8,0Zm108,28a4.0002,4.0002,0,0,1-4,4,32.036,32.036,0,0,1-32-32V84a4,4,0,0,1,8,0v8a24.02718,24.02718,0,0,0,24,24A4.0002,4.0002,0,0,1,200,120Z"
           fill={colorFor("COGNITIVE")}
@@ -126,11 +198,13 @@ fill={colorFor("RESPIRATORY")}
       </svg>
 
       {/* Eyes = SLEEP. Plain shapes drawn directly on the canvas, no nested svg needed */}
-      <ellipse cx={97.5} cy={115} rx={1.8} ry={1} fill={colorFor("SLEEP")} stroke="white" strokeWidth={0.3} />
-      <ellipse cx={104} cy={115} rx={1.8} ry={1} fill={colorFor("SLEEP")} stroke="white" strokeWidth={0.3} />
+      <ellipse cx={97.5} cy={115} rx={1.8} ry={1} fill={colorFor("SLEEP")} stroke="white" strokeWidth={0.3} onClick={() => setSelected("SLEEP")} style = {{cursor:"pointer"}} />
+      <ellipse cx={104} cy={115} rx={1.8} ry={1} fill={colorFor("SLEEP")} stroke="white" strokeWidth={0.3} onClick={() => setSelected("SLEEP")} style = {{cursor:"pointer"}}/>
 
       {/* Mouth = BEHAVIORAL. A curved line: start left, bend down through the middle, end right */}
-      <path d="M97.5,118.5 Q100.75,121 104,118.5" fill="none" stroke={colorFor("BEHAVIORAL")} strokeWidth={1.2} strokeLinecap="round" />
+      <path d="M97.5,118.5 Q100.75,121 104,118.5" fill="none" stroke={colorFor("BEHAVIORAL")} strokeWidth={1.2} strokeLinecap="round" onClick={() => setSelected("BEHAVIORAL")} style = {{cursor:"pointer"}} />
     </svg>
+      <div>{renderPanel()}</div>
+    </div>
   );
 }

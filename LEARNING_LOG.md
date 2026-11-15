@@ -30,6 +30,13 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Clickable body figure and detail panel
+- Clicking a body part selects its system (`useState`). A side panel shows its status (in color), the reason, the next step from the escalation level, and each indicator's latest value against the person's usual.
+- `NO_DATA` systems say "No measurements yet". A null baseline says "still building your baseline".
+- Every panel says "Simulated data. Decision support only, not a diagnosis."
+- Indicator names come from `mocks/indicators.ts` for now. Swap in `GET /api/indicators` once it exists.
+- Concepts: [State and re-rendering](#state-and-re-rendering), [Event handlers](#event-handlers), [Conditional rendering](#conditional-rendering)
+
 ### 2026-11-14: Body figure, first version
 - Added `components/BodyFigure.tsx`: an SVG body where each part is colored by its body system's status. The body outline is thermoregulation, the lungs respiratory, the heart cardiovascular, the brain cognitive, the eyes sleep, and the mouth behavioral.
 - Added `StatusResponse` types to `types.ts` (with `| null` where the backend can send null), and simulated data in `mocks/status.ts` with every status, so every color shows.
@@ -158,6 +165,18 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### State and re-rendering
+`const [selected, setSelected] = useState(null)` gives a component memory. Calling `setSelected(...)` stores a new value and makes React run the component again, so the screen matches the new value.
+> Like 5: the component's memory. When it remembers something new, it redraws its picture.
+
+### Event handlers
+`onClick={() => setSelected("RESPIRATORY")}` passes a function to run later, on click. Writing `onClick={setSelected("RESPIRATORY")}` would run it immediately, while drawing.
+> Like 5: a sticky note that says "when tapped, do this," instead of doing it right now.
+
+### Conditional rendering
+Show different JSX depending on the data: early `return`s in a helper function, `cond ? A : B`, or `cond && A` (show A only if cond is true).
+> Like 5: a choose-your-own-adventure book. Which page you see depends on what you picked.
 
 ### SVG viewBox
 `viewBox="minX minY width height"` sets the coordinate grid that the shapes are drawn in. The browser scales that grid to fit the element on screen. Changing the numbers crops or zooms without moving any shapes.
