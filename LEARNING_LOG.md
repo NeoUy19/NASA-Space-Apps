@@ -30,6 +30,11 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Assessment service
+- `AssessmentService.assess(crewMemberId)` builds the full `/status` response. It covers a 404 for an unknown crew member, a 14-day window, each indicator assessed against its own history, the worst indicator per body system, escalation, and an overall status.
+- Decision: `NORMAL` and `CAUTION` map to `SELF_CARE`, and `ALERT` maps to `CREW_MEDICAL_OFFICER`. `FLIGHT_SURGEON` is reserved for persistent alerts. The contract was updated to match.
+- Concepts: [Dependency injection](#dependency-injection), [Variable scope](#variable-scope), [Comparing enums](#comparing-enums)
+
 ### 2026-11-14: Tests for the assessment rules
 - `AssessmentRulesTest`: 8 JUnit tests covering mean, standard deviation, NORMAL, CAUTION and ALERT, too few readings, and the never-varies cases. Run them with `cd backend && ./mvnw test`.
 - Concepts: [Unit tests](#unit-tests), [src/main vs. src/test](#srcmain-vs-srctest)
@@ -131,6 +136,17 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Nullable fields
 `null` means "no value." Carl's entity uses `Double`, which can be `null`, instead of `double`, which can't, so a missing range is stored as "unknown" rather than a fake `0`.
 > Like 5: an empty box is not the same as a box with a zero in it.
+
+### Dependency injection
+A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
+> Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Variable scope
+A variable declared inside `{ }` only exists inside those braces. To set it in an `if`/`else` and use it afterwards, declare it before the `if` and only assign it inside.
+> Like 5: a toy made inside a room stays in that room. If you need it in the hallway, put it in the hallway first.
+
+### Comparing enums
+`a.compareTo(b) > 0` means "a is declared after b." `Status` is declared `NORMAL, CAUTION, ALERT, NO_DATA`, so later means worse, except that `NO_DATA` sits last and needs its own check.
 
 ### Unit tests
 A unit test runs one small piece of code with known inputs and checks the answer with `assertEquals(expected, actual)`. Each test follows three steps: set up, run, check. Name tests after the behavior (`betweenTwoAndThreeStandardDeviationsIsCaution`), so a failure tells you what broke. Pick inputs with easy numbers (an average of 97 and a wobble of exactly 1) so you can check the expected answer in your head.
