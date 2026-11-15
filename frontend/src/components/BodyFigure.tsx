@@ -1,6 +1,5 @@
-import type { StatusResponse, BodySystem, EscalationLevel } from "../types";
+import type { StatusResponse, BodySystem, EscalationLevel, Indicator } from "../types";
 import {useState} from "react";
-import { mockIndicators } from "../mocks/indicators";
 import { STATUS_COLORS, SYSTEM_LABELS } from "../theme";
 import StatusBadge from "./StatusBadge";
 
@@ -11,7 +10,7 @@ const ESCALATION_LABELS: Record<EscalationLevel, string> = {
 };
 
 // compact = just the small figure with no detail panel (used on the crew overview).
-export default function BodyFigure({ status, compact = false }: { status: StatusResponse; compact?: boolean }) {
+export default function BodyFigure({ status, compact = false, indicators =[] }: { status: StatusResponse; compact?: boolean, indicators?: Indicator[] }) {
     const [selected,setSelected] = useState<BodySystem | null > (null);
   function colorFor(system: BodySystem): string {
     const entry = status.bodySystems.find((s) => s.bodySystem === system);
@@ -23,7 +22,32 @@ export default function BodyFigure({ status, compact = false }: { status: Status
   }
     const detail = status.bodySystems.find((s) => s.bodySystem === selected);
 
-  // Builds the side panel for whatever body part is selected.
+  function renderWhyItMatters(){
+// Every indicator that belongs to the clicked system
+  const defs = indicators.filter((d) => d.bodySystem === selected);
+  if (defs.length === 0) return null;   // e.g. COGNITIVE has none yet
+
+  return (
+    <div className="why">
+      <h3>Why it matters in space</h3>
+      {defs.map((d) => (
+        <div key={d.id}>
+          <strong> {d.name} </strong>
+          <p>{d.whyItMatters}</p>
+          <p>Spaceflight hazard: {d.relatedHazard}</p>
+          <p>
+            Source:{" "}
+            {d.source.split(";").map((url) => (
+    <a key={url} href={url.trim()} target="_blank" rel="noreferrer">
+      {url.trim().replace(/^https?:\/\//, "").split("/")[0]}
+    </a>))}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+    // Builds the side panel for whatever body part is selected.
   function renderPanel() {
     // Case 1: nothing clicked yet (after this line, TypeScript knows detail exists)
     if (!selected || !detail) {
@@ -55,8 +79,8 @@ export default function BodyFigure({ status, compact = false }: { status: Status
         <ul>
           {detail.indicators.map((i) => {
             // The status only has an ID, so look up the name and unit.
-            // Mock list for now; this becomes GET /api/indicators later.
-            const def = mockIndicators.find((d) => d.id === i.indicatorId);
+            // From GET /api/indicators, passed in from App.
+            const def = indicators.find((d) => d.id === i.indicatorId);
             const name = def?.name ?? `Indicator ${i.indicatorId}`;
             const unit = def?.unit ?? "";
             return (
@@ -67,7 +91,7 @@ export default function BodyFigure({ status, compact = false }: { status: Status
             );
           })}
         </ul>
-
+          {renderWhyItMatters()}
         <p className="note">
           Simulated data. Decision support only, not a diagnosis.
         </p>
