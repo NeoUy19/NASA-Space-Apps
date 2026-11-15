@@ -24,6 +24,8 @@ Work on a short-lived branch and merge to `main` every couple of hours.
 - [x] **Must:** SVG body figure, with each body system colored by status and clickable. Uses `mocks/status.ts` until it's wired up.
   - [ ] Add the SVG Repo icon licenses to the credits.
 - [ ] **Must:** wire Adi's screens to the real endpoints (body figure → `/status`, check-in → `POST /measurements`, indicators → `GET /indicators`).
+  - [x] Body figure → `/status`, with a crew dropdown (`screens/StatusScreen.tsx`).
+  - [ ] Check-in → `POST /measurements` and indicators → `GET /indicators` (waiting on Carl's endpoints).
 - [ ] **Should:** `GET /api/crew/{id}/alerts` (trend-based alerts).
 
 ## Carl (backend)
