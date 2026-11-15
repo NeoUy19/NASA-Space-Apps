@@ -2,10 +2,8 @@ package com.example.backend.service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.springframework.http.HttpStatus;
+import com.example.backend.config.NotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.example.backend.dto.BodySystemStatus;
 import com.example.backend.dto.IndicatorStatus;
 import com.example.backend.dto.StatusResponse;
@@ -85,7 +83,7 @@ public class AssessmentService {
     public StatusResponse assess(Long crewMemberId){
         // Unknown crew member: Spring turns this into a 404 response.
         if (!crewRepo.existsById(crewMemberId)){ //if crew member does not exist throw error
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Crew member not found");
+            throw new NotFoundException("Crew member not found");
 
         }
 
