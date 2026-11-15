@@ -149,7 +149,7 @@ Returns a crew member's current status, from their latest measurements. Used for
       "bodySystem": "RESPIRATORY",
       "status": "CAUTION",
       "reason": "SpO2 92% is 5 points under your baseline of 97%.",
-      "escalationLevel": "CREW_MEDICAL_OFFICER",
+      "escalationLevel": "SELF_CARE",
       "recommendedAction": "...",
       "indicators": [
         {
@@ -166,6 +166,7 @@ Returns a crew member's current status, from their latest measurements. Used for
 ```
 
 - `bodySystems` always has one entry per body system, in the order listed at the top. A system with no measurements has status `NO_DATA`, an empty `indicators` array, and `null` for `reason`, `escalationLevel` and `recommendedAction`.
+- `escalationLevel`: `NORMAL` and `CAUTION` map to `SELF_CARE`, and `ALERT` maps to `CREW_MEDICAL_OFFICER`. `FLIGHT_SURGEON` is reserved for persistent alerts from `/alerts`.
 - `overallStatus` is the worst status across all systems (`ALERT` > `CAUTION` > `NORMAL`). `NO_DATA` doesn't count.
 - `recommendedAction` text comes from the sourced guidance in `docs/health-content.md`. It's decision support, never a diagnosis.
 
