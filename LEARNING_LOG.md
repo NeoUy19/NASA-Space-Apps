@@ -30,6 +30,13 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Trend chart on real data
+- `TrendChart` now fetches `GET /api/crew/{id}/measurements?indicator=...` (rerunning on `[crewId, indicatorId, refreshKey]`) and `GET /api/indicators` for its dropdown. No more mocks.
+- A check-in now adds a new point to the chart. Every Must-have screen uses real data.
+- Mistake and lesson: the chart's state and fetches first ended up in `App`. State belongs in the component that uses it. Only lift it up when several components share it (like `crewId`).
+- Git: `Neo/lift-status` was pushed but never merged, so this branch is built on top of it plus main. One PR brings in both.
+- Concepts: [Where state lives](#where-state-lives)
+
 ### 2026-11-15: One shared status for the body figure and guidance
 - `App` now fetches `GET /api/crew/{id}/status` once (into `crewStatus`) and passes it to both `BodyFigure` and `Guidance`. They always agree, and both update after a check-in.
 - `Guidance` takes a `status` prop instead of reading `mockStatus`. That's why it didn't update after a check-in before.
@@ -203,6 +210,10 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Where state lives
+Put state in the lowest component that needs it. If only `TrendChart` uses the measurements, they live in `TrendChart`. If several components need it (`crewId`, the status), lift it to their shared parent. Passing props: the function line is the blank form (`{ crewId }: { crewId: number }`), and the tag fills it in (`<TrendChart crewId={crewId} />`).
+> Like 5: keep your toothbrush in your own room. Only put things in the living room if the whole family uses them.
 
 ### Single source of truth
 Fetch shared data once, in the closest common parent, and pass it down. Two components fetching the same thing separately can show different answers.
