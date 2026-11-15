@@ -85,6 +85,19 @@ Records one measurement from a check-in.
 **Errors:** `400` if a field is missing or value isn't a number. `404` crew member or indicator does not exist
 
 ---
+## GET /api/crew
+
+Returns all crew members. Used for the crew dropdown.
+
+**Response 200**
+
+```json
+[
+  { "id": 1, "name": "...", "role": "Commander" }
+]
+```
+
+**Errors:** none
 
 ## GET /api/crew/{id}/measurements
 
