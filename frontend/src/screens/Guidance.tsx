@@ -1,4 +1,4 @@
-import { mockStatus } from '../mocks/status';
+import type { StatusResponse } from '../types';
 
 
 const actions: Record<string, string> = {
@@ -21,14 +21,14 @@ const severity: Record<string, number> = {
 };
 
 
-function Guidance() {       //This function determines what guidance to give the user based on their health status. It filters out any body systems that have no data and displays the status, reason, and recommended action for each system.
+function Guidance({ status }: {status: StatusResponse}) {       //This function determines what guidance to give the user based on their health status. It filters out any body systems that have no data and displays the status, reason, and recommended action for each system.
     return (
         <div>
             <p>Simulated data</p>
             <h2>Guidance</h2>
             <p>This is decision support, not a diagnosis.</p>
             <ul>
-                {mockStatus.bodySystems
+                {status.bodySystems
                     .filter((system) => system.status !== "NO_DATA")
                     .sort((a,b) => severity[b.status] - severity[a.status])
                     .map((system) => (

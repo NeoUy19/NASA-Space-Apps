@@ -30,6 +30,13 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: One shared status for the body figure and guidance
+- `App` now fetches `GET /api/crew/{id}/status` once (into `crewStatus`) and passes it to both `BodyFigure` and `Guidance`. They always agree, and both update after a check-in.
+- `Guidance` takes a `status` prop instead of reading `mockStatus`. That's why it didn't update after a check-in before.
+- Deleted `StatusScreen.tsx`, because its job moved into `App`.
+- Gotcha: `App` already had a `status` variable (the health check), so the new one is `crewStatus`. Using the wrong setter would have put an object into the page heading.
+- Concepts: [Single source of truth](#single-source-of-truth), [Fragments](#fragments)
+
 ### 2026-11-15: Hotfix: conflict markers on main
 - PR #23 merged `App.tsx` with `<<<<<<<` and `>>>>>>>` markers still in it, so the app wouldn't compile for anyone who pulled main.
 - Fixed it: `App.tsx` now renders `StatusScreen` with props, plus Adi's `TrendChart`.
@@ -196,6 +203,14 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Single source of truth
+Fetch shared data once, in the closest common parent, and pass it down. Two components fetching the same thing separately can show different answers.
+> Like 5: Mom calls Grandma once and tells both kids, instead of each kid calling and hearing something different.
+
+### Fragments
+`<> ... </>` groups several elements into one without adding an extra `<div>`. It's useful where only one element is allowed, like each side of `cond ? A : B`.
+> Like 5: an invisible rubber band around two toys, so you can hand them over as one bundle.
 
 ### Conflict markers
 During a conflict, Git writes both versions into the file between `<<<<<<<`, `=======` and `>>>>>>>`. You must edit the file to the final version and delete the markers. Git doesn't check this: `git add` accepts the file with the markers still in it. Search with `git grep "<<<<<<<"` before committing.
