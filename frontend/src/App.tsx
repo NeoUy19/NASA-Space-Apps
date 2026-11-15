@@ -1,4 +1,5 @@
 import CheckIn from './screens/CheckIn'
+import Guidance from './screens/Guidance'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import BodyFigure from './components/BodyFigure'
@@ -23,6 +24,7 @@ function App() {
         <div>
           <h1>backend: {status}</h1>
           <CheckIn />
+          <Guidance />
           <BodyFigure status={mockStatus} />
           <p>
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
