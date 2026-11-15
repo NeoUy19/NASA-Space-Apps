@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 import './App.css'
 import BodyFigure from './components/BodyFigure'
 import StatusBadge from './components/StatusBadge'
-import type { CrewMember, StatusResponse } from './types'
+import type { CrewMember, StatusResponse, Indicator } from './types'
 
 // The two pages. "health" is one crew member's dashboard, "crew" compares everyone.
 type Page = "health" | "crew"
@@ -18,9 +18,16 @@ function App() {
   const [refreshKey, setRefreshKey] = useState<number>(0)
   const [crewStatus, setCrewStatus]=useState<StatusResponse|null>(null)
   const [crew, setCrew] = useState<CrewMember[]>([])
+  const [indicators, setIndicators] = useState<Indicator[]>([])
   // Start on the crew page if the address ends in #crew, so a reload keeps your place.
   const [page, setPage] = useState<Page>(window.location.hash === "#crew" ? "crew" : "health")
 
+  useEffect(()=> {
+    fetch(`http://localhost:8080/api/indicators`)
+    .then(r=> r.json())
+    .then(data => setIndicators(data))
+    .catch(()=> setIndicators([]))
+  })
   useEffect(() => {
           fetch(`http://localhost:8080/api/crew/${crewId}/status`)
           .then(r => r.json())
@@ -94,7 +101,7 @@ function App() {
               <section className="card">
                 <p className="sim-tag">Simulated data</p>
                 <h2>Body status</h2>
-                <BodyFigure status={crewStatus} />
+                <BodyFigure status={crewStatus} indicators = {indicators} />
               </section>
               <section className="card">
                 <Guidance status={crewStatus} />

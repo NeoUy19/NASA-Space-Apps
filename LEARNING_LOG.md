@@ -30,6 +30,14 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: "Why it matters in space" with NASA sources
+- Clicking a body part now also shows, for each of its indicators: why it matters in spaceflight, the related spaceflight hazard, and clickable source links (shown as the site name, like `ntrs.nasa.gov`). The content was already in the database from Adi's health content, but no screen showed it.
+- `App` fetches `GET /api/indicators` once and passes it to `BodyFigure`. The panel's indicator names now come from the database instead of `mocks/indicators.ts`.
+- `indicators` is an optional prop with a default of `[]`, so the compact figures on the Crew overview still work without it.
+- Link text is made by trimming the URL as plain text, not with `new URL()`, which throws on an invalid address and would blank the panel.
+- This completes the core loop's "plain-language link to the spaceflight hazard", and gives the Relevance criterion visible NASA sources.
+- Concepts: [JSX braces](#jsx-braces), [Default props](#default-props)
+
 ### 2026-11-15: Space theme and crew overview page
 - Restyled the whole frontend as a dark "mission console": deep navy, a multicolor starfield, glowing panels, and a header with an "Onboard system" pill. It's all CSS (no images or web fonts), so it works with no network.
 - New layout: check-in, body figure and guidance side by side, so a check-in visibly changes the figure without scrolling. Two pages with tabs: "My health" and "Crew overview".
@@ -233,6 +241,14 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### JSX braces
+Inside JSX, tags are written plainly and text is printed as-is: `<p>d.name</p>` prints the words "d.name". Curly braces insert a JavaScript value: `<p>{d.name}</p>` prints the actual name. Don't put braces around tags themselves.
+> Like 5: a form with blanks. Plain text is printed on the form; `{ }` is a blank that gets filled in.
+
+### Default props
+`{ indicators = [] }: { indicators?: Indicator[] }` makes a prop optional (`?`) and gives it a value when nobody passes one. Without the default, it's `undefined`, and `.filter()` on it would crash.
+> Like 5: if nobody gives you a lunchbox, use an empty one instead of having none.
 
 ### CSS variables
 `--accent: #5cc8ff;` on `:root` defines a named value, and `color: var(--accent);` uses it anywhere. Changing the theme means changing the variables, not every rule. Values needed in JavaScript (SVG fills, chart colors) live in `theme.ts`, and must be kept the same as the CSS ones.
