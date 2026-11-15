@@ -30,6 +30,11 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-14: Status endpoint
+- Added `StatusController`: `GET /api/crew/{id}/status` passes the request straight to `AssessmentService.assess(id)`. It returns all 6 body systems (`NO_DATA` until measurements are seeded), and a 404 for an unknown crew member.
+- To do: error bodies are Spring's default, not the contract's `{ "error": "..." }`. A global `@RestControllerAdvice` handler can fix that later.
+- Concepts: [Controller vs. service](#controller-vs-service), [Path vs. query parameters](#path-vs-query-parameters)
+
 ### 2026-11-14: Check-in form
 - Added `screens/CheckIn.tsx`: one input per indicator, builds `POST /api/measurements` bodies on submit (logged for now, not sent yet).
 - Blocks impossible values (negatives, SpO2 over 100, sleep over 24 h, mood outside 1–5). Health thresholds stay in the assessment service.
@@ -145,6 +150,10 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Controller vs. service
+The controller handles HTTP: the URL, `@PathVariable`, and turning the result into JSON. The service holds the logic. Keeping controllers thin means the logic can be tested and reused without a web request.
+> Like 5: the waiter takes your order to the kitchen. The kitchen cooks. The waiter doesn't cook.
 
 ### Variable scope
 A variable declared inside `{ }` only exists inside those braces. To set it in an `if`/`else` and use it afterwards, declare it before the `if` and only assign it inside.
