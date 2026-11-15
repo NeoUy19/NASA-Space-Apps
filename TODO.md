@@ -25,7 +25,8 @@ Work on a short-lived branch and merge to `main` every couple of hours.
   - [ ] Add the SVG Repo icon licenses to the credits.
 - [ ] **Must:** wire Adi's screens to the real endpoints (body figure → `/status`, check-in → `POST /measurements`, indicators → `GET /indicators`).
   - [x] Body figure → `/status`, with a crew dropdown (`screens/StatusScreen.tsx`).
-  - [ ] Check-in → `POST /measurements` and indicators → `GET /indicators` (waiting on Carl's endpoints).
+  - [x] Check-in → `POST /measurements` and indicators → `GET /indicators`. A check-in now refreshes the body figure.
+  - [ ] Guidance screen → real `/status` (it still reads `mockStatus`). Idea: `App` fetches `/status` once and passes it to both `StatusScreen` and `Guidance`.
 - [ ] **Should:** `GET /api/crew/{id}/alerts` (trend-based alerts).
 
 ## Carl (backend)

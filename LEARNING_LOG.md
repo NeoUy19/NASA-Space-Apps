@@ -30,6 +30,15 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Check-in saves to the backend
+- `CheckIn` now loads indicators from `GET /api/indicators` (no more mock), and on submit POSTs each value to `POST /api/measurements` with `Promise.all`. It only shows "saved" after every request finishes.
+- Lifted state up: `App` owns `crewId` (and the crew dropdown) and a `refreshKey`. `CheckIn` uses `crewId` and calls `onSaved()` after saving, which bumps `refreshKey`. `StatusScreen` refetches when `crewId` or `refreshKey` changes.
+- Verified in the API: a new check-in becomes the latest reading and is assessed (crew 2 SpO2 90 → ALERT).
+- Fixed a merge conflict on Adi's `adi/trend-chart` branch (`App.tsx`), and a missing type import in `mocks/measurements.ts`.
+- To do: the Guidance screen still reads `mockStatus`, so it doesn't change after a check-in.
+- Note: `CheckIn.tsx` was auto-formatted by the editor (a large diff). Turn off format-on-save to avoid conflicts.
+- Concepts: [POST requests](#post-requests), [Promise.all](#promiseall), [Lifting state up](#lifting-state-up), [Rules of hooks](#rules-of-hooks)
+
 ### 2026-11-15: Body figure on real data
 - Added `screens/StatusScreen.tsx`: a crew dropdown (1 to 3, labeled simulated) that fetches `GET /api/crew/{id}/status` and passes it to `BodyFigure`. `App.tsx` renders `StatusScreen` instead of the mock.
 - Milestone: the core loop runs end to end: seeded data → assessment → API → colored body figure.
@@ -181,6 +190,22 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### POST requests
+`fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(obj) })` sends data to be saved. GET (the default) only asks for data. `fetch` only fails on network errors. A 400 reply still "succeeds" unless you check `r.ok`.
+> Like 5: GET is asking the library for a book, and POST is dropping a letter in the mailbox.
+
+### Promise.all
+`Promise.all(list.map(item => fetch(...)))` starts every request and waits until all of them finish. `.then` runs once, after the last one.
+> Like 5: waiting at the door until all your friends have arrived, not just the first one.
+
+### Lifting state up
+When two components need the same data, move the state to their closest shared parent and pass it down as props. To let a child change it, pass down a function (`onSaved`) that the child calls.
+> Like 5: two kids fighting over their own remotes. Give one remote to the parent, and hand each kid a walkie-talkie to say "change it now."
+
+### Rules of hooks
+`useState` and `useEffect` must sit at the top level of a component, never inside a function, loop or `if`. React matches hooks by their order on every render. A `useEffect` doesn't return data, so store the result in state.
+> Like 5: kids lining up in the same order every day, so the teacher knows who's who.
 
 ### useEffect dependencies
 The array at the end of `useEffect` says when to run it again. `[]` means once, when the component first appears. `[crewId]` means again every time `crewId` changes.
