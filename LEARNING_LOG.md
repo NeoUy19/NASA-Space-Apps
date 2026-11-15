@@ -30,6 +30,17 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Space theme and crew overview page
+- Restyled the whole frontend as a dark "mission console": deep navy, a multicolor starfield, glowing panels, and a header with an "Onboard system" pill. It's all CSS (no images or web fonts), so it works with no network.
+- New layout: check-in, body figure and guidance side by side, so a check-in visibly changes the figure without scrolling. Two pages with tabs: "My health" and "Crew overview".
+- New `screens/CrewOverview.tsx`: one column per crew member, one row per indicator. Each cell shows the latest value, a status badge, and that person's own usual value. A mini body figure sits on top of each column, and "View details" opens that person's dashboard.
+- New `theme.ts` (shared status colors and labels) and `components/StatusBadge.tsx`. Status is always shown as a word plus a color, never color alone.
+- `BodyFigure` got a `compact` prop, so the crew page reuses it without the detail panel.
+- Check-in instructions are now collapsed behind "How to take this measurement", to keep the form on one screen.
+- Bug found: the first starfield was invisible, because a background on `:root` was painted over layers with `z-index: -1`. Verified the fix with screenshots.
+- The chart line animation is off: the line didn't draw in headless screenshots, and an instant line is safer for the demo.
+- Concepts: [CSS variables](#css-variables), [Reusing a component with props](#reusing-a-component-with-props), [Stacking order](#stacking-order)
+
 ### 2026-11-15: Crew dropdown from the backend
 - The crew dropdown now loads from Carl's `GET /api/crew` instead of three hardcoded options. It shows each name and role, still labeled "(simulated)".
 - Added a `CrewMember` type to `types.ts`.
@@ -222,6 +233,18 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### CSS variables
+`--accent: #5cc8ff;` on `:root` defines a named value, and `color: var(--accent);` uses it anywhere. Changing the theme means changing the variables, not every rule. Values needed in JavaScript (SVG fills, chart colors) live in `theme.ts`, and must be kept the same as the CSS ones.
+> Like 5: naming your paint cans. Everyone says "use the alert red," and repainting means changing one can.
+
+### Reusing a component with props
+Instead of writing a second, smaller body figure, `BodyFigure` takes `compact`. An optional prop with a default (`compact = false`) keeps every existing use working.
+> Like 5: the same Lego figure with a switch for "small, no accessories."
+
+### Stacking order
+Elements with `z-index: -1` are painted behind normal content, including behind a parent's background. A background on `:root` covered the star layers. Moving the background to `body` only (so it becomes the page canvas) let the stars show.
+> Like 5: sheets of paper in a stack. The stars were under a solid-colored sheet.
 
 ### Data-driven UI
 Build lists from fetched data with `.map()`, instead of writing each item by hand. When the data changes (a new crew member), the UI updates without a code change.

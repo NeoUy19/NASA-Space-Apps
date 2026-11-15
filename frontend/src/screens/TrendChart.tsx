@@ -38,8 +38,8 @@ function TrendChart({ crewId, refreshKey, status}  : { crewId: number; refreshKe
     .find((i) => i.indicatorId === indicatorId)?.baseline;
 
     return (
-        <div>
-            <p>Simulated data</p>
+        <div className="trends">
+            <p className="sim-tag">Simulated data</p>
             <h2>Trends</h2>
             <select value={indicatorId} onChange={(e) => setIndicatorId(Number(e.target.value))}>
                 {indicators.map((indicator) => (
@@ -50,14 +50,14 @@ function TrendChart({ crewId, refreshKey, status}  : { crewId: number; refreshKe
             </select>
 
             <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" interval={0}/>
-                    <YAxis domain={["auto", "auto"]} />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                <LineChart data={chartData} margin={{ top: 8, right: 28, bottom: 0, left: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#25345c" />
+                    <XAxis dataKey="date" interval={0} stroke="#8b95a9" tick={{ fontSize: 12 }} />
+                    <YAxis domain={["auto", "auto"]} stroke="#8b95a9" tick={{ fontSize: 12 }} />
+                    <Tooltip contentStyle={{ background: "#0f1730", border: "1px solid #25345c", borderRadius: 8 }} labelStyle={{ color: "#eef3ff" }} />
+                    <Line type="monotone" dataKey="value" stroke="#5cc8ff" strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} />
                     {baseline != null && (
-                <ReferenceLine y={baseline} stroke="gray" strokeDasharray="4 4" label="your average" />
+                <ReferenceLine y={baseline} stroke="#b6c0d6" strokeDasharray="4 4" label={{ value: "your average", fill: "#b6c0d6", fontSize: 12, position: "insideTopLeft" }} />
 )}
                 </LineChart>
             </ResponsiveContainer>

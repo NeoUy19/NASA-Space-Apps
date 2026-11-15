@@ -1,30 +1,17 @@
-import type { StatusResponse, Status, BodySystem, EscalationLevel } from "../types";
+import type { StatusResponse, BodySystem, EscalationLevel } from "../types";
 import {useState} from "react";
 import { mockIndicators } from "../mocks/indicators";
-
-// Friendly names for the panel. The API sends the ALL_CAPS versions.
-const SYSTEM_LABELS: Record<BodySystem, string> = {
-  CARDIOVASCULAR: "Heart and circulation",
-  RESPIRATORY: "Lungs and breathing",
-  THERMOREGULATION: "Body temperature",
-  SLEEP: "Sleep",
-  BEHAVIORAL: "Mood",
-  COGNITIVE: "Thinking and reaction time",
-};
+import { STATUS_COLORS, SYSTEM_LABELS } from "../theme";
+import StatusBadge from "./StatusBadge";
 
 const ESCALATION_LABELS: Record<EscalationLevel, string> = {
   SELF_CARE: "Self-care: keep monitoring and follow the guidance",
   CREW_MEDICAL_OFFICER: "Tell your crew medical officer",
   FLIGHT_SURGEON: "Contact the flight surgeons",
 };
-const STATUS_COLORS: Record<Status, string> = {
-  NORMAL: "#61d230",
-  CAUTION: "#f3950f",
-  ALERT: "#d01c1c",
-  NO_DATA: "#9ca3af",
-};
 
-export default function BodyFigure({ status }: { status: StatusResponse }) {
+// compact = just the small figure with no detail panel (used on the crew overview).
+export default function BodyFigure({ status, compact = false }: { status: StatusResponse; compact?: boolean }) {
     const [selected,setSelected] = useState<BodySystem | null > (null);
   function colorFor(system: BodySystem): string {
     const entry = status.bodySystems.find((s) => s.bodySystem === system);
@@ -48,7 +35,8 @@ export default function BodyFigure({ status }: { status: StatusResponse }) {
       return (
         <div>
           <h2>{SYSTEM_LABELS[detail.bodySystem]}</h2>
-          <p style={{ color: STATUS_COLORS.NO_DATA }}>No measurements yet</p>
+          <p><StatusBadge status="NO_DATA" /></p>
+          <p>No measurements yet.</p>
           <p>Log a check-in for this system to start building your baseline.</p>
         </div>
       );
@@ -58,7 +46,7 @@ export default function BodyFigure({ status }: { status: StatusResponse }) {
     return (
       <div>
         <h2>{SYSTEM_LABELS[detail.bodySystem]}</h2>
-        <p style={{ color: STATUS_COLORS[detail.status], fontWeight: "bold" }}>{detail.status}</p>
+        <p><StatusBadge status={detail.status} /></p>
         <p>{detail.reason}</p>
         {detail.escalationLevel && (
           <p>Next step: {ESCALATION_LABELS[detail.escalationLevel]}</p>
@@ -74,13 +62,13 @@ export default function BodyFigure({ status }: { status: StatusResponse }) {
             return (
               <li key={i.indicatorId} style={{ color: STATUS_COLORS[i.status] }}>
                 {name}: {i.latestValue} {unit}
-                {" "}(your usual: {i.baseline ?? "still building your baseline"})
+                {" "}(your usual: {i.baseline != null ? i.baseline.toFixed(1) : "still building your baseline"})
               </li>
             );
           })}
         </ul>
 
-        <p style={{ fontSize: "0.8em", opacity: 0.7 }}>
+        <p className="note">
           Simulated data. Decision support only, not a diagnosis.
         </p>
       </div>
@@ -88,8 +76,8 @@ export default function BodyFigure({ status }: { status: StatusResponse }) {
   }
 
   return (
-    <div style={{ display: "flex", gap: 24 }}>
-    <svg viewBox="55 95 90 215" width={250}>
+    <div className={compact ? "body-figure compact" : "body-figure"}>
+    <svg viewBox="55 95 90 215" width={250} role="img" aria-label="Body figure colored by body system status">
       <svg x={0} y={0} width={200} height={400} viewBox=" 0 0 206.326 206.326" onClick={() => setSelected("THERMOREGULATION")} style = {{cursor:"pointer"}}>
         <path
           d="M104.265,117.959c-0.304,3.58,2.126,22.529,3.38,29.959c0.597,3.52,2.234,9.255,1.645,12.3
@@ -204,7 +192,7 @@ fill={colorFor("RESPIRATORY")}
       {/* Mouth = BEHAVIORAL. A curved line: start left, bend down through the middle, end right */}
       <path d="M97.5,118.5 Q100.75,121 104,118.5" fill="none" stroke={colorFor("BEHAVIORAL")} strokeWidth={1.2} strokeLinecap="round" onClick={() => setSelected("BEHAVIORAL")} style = {{cursor:"pointer"}} />
     </svg>
-      <div>{renderPanel()}</div>
+      {!compact && <div className="body-figure-panel">{renderPanel()}</div>}
     </div>
   );
 }

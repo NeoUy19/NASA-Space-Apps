@@ -60,21 +60,21 @@ function CheckIn({ crewId, onSaved }: { crewId: number; onSaved: () => void }) {
         onSaved();
       })
       .catch(() => {
-        setError("couldnt save.is backend running?"); // If all values are valid, clear any previous error messages
+        setError("Couldn't save. Is the backend running?"); // If all values are valid, clear any previous error messages
       });
   }
   return (
-    <div>
-      <p> Simulated data</p>
+    <div className="checkin">
+      <p className="sim-tag">Simulated data</p>
       <h2>Daily check-in</h2>
       {indicators.map((indicator) => (
-        <div key={indicator.id}>
+        <div key={indicator.id} className="field">
           <h3>
             {indicator.name} ({indicator.unit})
           </h3>
-          <p>{indicator.howToMeasure}</p>
           <input
             type="number"
+            aria-label={`${indicator.name} (${indicator.unit})`}
             value={values[indicator.id] || ""}
             onChange={(e) => {
               setValues({ ...values, [indicator.id]: e.target.value });
@@ -82,10 +82,14 @@ function CheckIn({ crewId, onSaved }: { crewId: number; onSaved: () => void }) {
               setSaved(false);
             }}
           />
+          <details>
+            <summary>How to take this measurement</summary>
+            <p>{indicator.howToMeasure}</p>
+          </details>
         </div>
       ))}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {saved && <p style={{ color: "green" }}>Check-in saved successfully!</p>}
+      {error && <p className="msg-error">{error}</p>}
+      {saved && <p className="msg-ok">Check-in saved successfully!</p>}
       <button onClick={handleSubmit}>Submit check-in</button>
     </div>
   );
