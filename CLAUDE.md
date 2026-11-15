@@ -33,10 +33,14 @@ so assessment logic must work with no network.
   model call that rephrases rule-engine output as a daily briefing. Rules stay the source of truth.
 
 ## Current state
-- Done: `GET /api/health` and CORS, full `api-contract.md`, JPA entities and repositories,
-  `docs/health-content.md` (no NASA fixed ranges, so range fields are nullable).
-- Assessment: baselines are computed from past readings, not stored. The proposed rule is
-  CAUTION above 2 and ALERT above 3 standard deviations from the person's own baseline.
+- Feature code is done (2026-11-15) and works end to end on real data: check-in → `POST /measurements`
+  → `/status` → color-coded body figure, guidance, and trend chart (with a "your usual" baseline line).
+  All endpoints in `api-contract.md` exist except `/alerts`. Feature freeze is in effect.
+- Assessment: baselines are computed from the last 14 days of readings, not stored. CAUTION above 2
+  and ALERT above 3 standard deviations from the person's own baseline. Fewer than 5 readings is NORMAL.
+- Demo data: `MeasurementSeeder` seeds 14 days. Crew 1 has ALERT and CAUTION today, crew 2 is all normal,
+  and crew 3 has CAUTION. The in-memory database resets on every backend restart.
+- Remaining: sourced `recommendedAction` text, the demo script, slides, video, and submission.
 - Per-person tasks live in `TODO.md`. The learning log is `LEARNING_LOG.md`.
 
 ## Team
