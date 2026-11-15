@@ -12,9 +12,9 @@ Work on a short-lived branch and merge to `main` every couple of hours.
 - [ ] Review `api-contract.md` once it's drafted. Speak up now, before code depends on it.
 
 ## NeoUy19 (fullstack)
-- [ ] **Must:** write `api-contract.md` (JSON shapes for all six endpoints). Carl and Adi are blocked on this.
-- [ ] **Must:** assessment service: compare each value to its safe range and to the crew member's baseline, and return `NORMAL`, `CAUTION` or `ALERT` with a reason.
-- [ ] **Must:** `GET /api/crew/{id}/status`: a summary per body system, for the body figure.
+- [x] **Must:** write `api-contract.md` (JSON shapes for all six endpoints). Carl and Adi are blocked on this.
+- [x] **Must:** assessment service: compare each value to its safe range and to the crew member's baseline, and return `NORMAL`, `CAUTION` or `ALERT` with a reason.
+- [x] **Must:** `GET /api/crew/{id}/status`: a summary per body system, for the body figure.
 - [ ] **Must:** SVG body figure, with each body system colored by status and clickable.
 - [ ] **Must:** wire Adi's screens to the real endpoints.
 - [ ] **Should:** `GET /api/crew/{id}/alerts` (trend-based alerts).
