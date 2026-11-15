@@ -35,7 +35,8 @@ function Guidance() {       //This function determines what guidance to give the
                         <li key={system.bodySystem}>
                             <strong>{system.bodySystem}:</strong>{" "}
                             <span style={{ color: statusColors[system.status] }}>{system.status}</span>: {system.reason}
-                            <p>{actions[system.escalationLevel ?? ""]}</p>     
+                            <p>{actions[system.escalationLevel ?? ""]}</p> 
+                              {system.recommendedAction && <p>{system.recommendedAction}</p>}    
                         </li>
                     ))}
             </ul>
