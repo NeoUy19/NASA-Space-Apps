@@ -1,4 +1,5 @@
 import CheckIn from './screens/CheckIn'
+import TrendChart from './screens/TrendChart'
 import Guidance from './screens/Guidance'
 import { useState } from 'react'
 import { useEffect } from 'react'
@@ -25,6 +26,7 @@ function App() {
           <CheckIn />
           <Guidance />
           <StatusScreen />
+          <TrendChart />
           <p>
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
           </p>
