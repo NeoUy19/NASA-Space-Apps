@@ -29,9 +29,9 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) {
         // 1. TODO: create 2 or 3 simulated crew members and save them
-        crewMemberRepository.save(new CrewMember("Neo Uy", "Pawn"));
-        crewMemberRepository.save(new CrewMember("Carl Doldolea", "God"));
-        crewMemberRepository.save(new CrewMember("Adi Latic", "Pawn"));
+        crewMemberRepository.save(new CrewMember("Hitori Gotoh", "Commander"));
+        crewMemberRepository.save(new CrewMember("Nijika Ijichi", "Flight Engineer"));
+        crewMemberRepository.save(new CrewMember("Ryo Yamada", "Crew Medical Officer"));
         // 2. TODO: create the 7 indicators from docs/health-content.md and save them
         indicatorRepository.save(new IndicatorDefinition(
                 "Heart rate",
