@@ -30,6 +30,12 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Hotfix: conflict markers on main
+- PR #23 merged `App.tsx` with `<<<<<<<` and `>>>>>>>` markers still in it, so the app wouldn't compile for anyone who pulled main.
+- Fixed it: `App.tsx` now renders `StatusScreen` with props, plus Adi's `TrendChart`.
+- Lesson: after resolving a conflict, search for `<<<<<<<` and run the app (or `npm run build`) before committing. Run `npm install` after pulling if `package.json` changed.
+- Concepts: [Conflict markers](#conflict-markers)
+
 ### 2026-11-15: Check-in saves to the backend
 - `CheckIn` now loads indicators from `GET /api/indicators` (no more mock), and on submit POSTs each value to `POST /api/measurements` with `Promise.all`. It only shows "saved" after every request finishes.
 - Lifted state up: `App` owns `crewId` (and the crew dropdown) and a `refreshKey`. `CheckIn` uses `crewId` and calls `onSaved()` after saving, which bumps `refreshKey`. `StatusScreen` refetches when `crewId` or `refreshKey` changes.
@@ -190,6 +196,10 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Conflict markers
+During a conflict, Git writes both versions into the file between `<<<<<<<`, `=======` and `>>>>>>>`. You must edit the file to the final version and delete the markers. Git doesn't check this: `git add` accepts the file with the markers still in it. Search with `git grep "<<<<<<<"` before committing.
+> Like 5: sticky notes saying "pick one!" If you leave the notes in, the code tries to run them and crashes.
 
 ### POST requests
 `fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(obj) })` sends data to be saved. GET (the default) only asks for data. `fetch` only fails on network errors. A 400 reply still "succeeds" unless you check `r.ok`.
