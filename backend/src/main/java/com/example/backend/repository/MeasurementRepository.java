@@ -7,4 +7,5 @@ import java.time.Instant;
 
 public interface MeasurementRepository extends JpaRepository<Measurement, Long> {
     List<Measurement> findByCrewMemberIdAndIndicatorIdAndTimestampAfterOrderByTimestampAsc(Long crewMemberId, Long indicatorId, Instant time);
+    List<Measurement> findByCrewMemberIdOrderByTimestampAsc(Long crewMemberId);
 }
