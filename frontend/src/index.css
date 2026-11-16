@@ -1,111 +1,177 @@
+/* Global theme: a dark "mission console" look.
+   No images or web fonts, so it works with no network. */
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --bg: #060a17;
+  --panel: rgba(15, 23, 48, 0.78);
+  --panel-solid: #0f1730;
+  --border: #25345c;
+  --border-soft: #1a2545;
+  --text: #b6c0d6;
+  --text-h: #eef3ff;
+  --text-dim: #8b95a9;
+  --accent: #5cc8ff;
+  --accent-bg: rgba(92, 200, 255, 0.12);
+
+  /* Status colors. Keep these the same as STATUS_COLORS in theme.ts. */
+  --status-normal: #5fd838;
+  --status-caution: #f5a524;
+  --status-alert: #ff5a52;
+  --status-nodata: #8b95a9;
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+  --mono: ui-monospace, 'SF Mono', Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
+  font: 16px/1.5 var(--sans);
+  color-scheme: dark;
   color: var(--text);
-  background: var(--bg);
+  /* No background here on purpose. A background on :root would be painted
+     over the star layers (they use z-index: -1). The body paints it instead. */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  min-height: 100svh;
+  /* A soft glow at the top, like light coming over a planet's edge. */
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -10%, rgba(64, 110, 255, 0.22), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(120, 70, 220, 0.12), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+/* Starfield, drawn with gradients (no images).
+   Two layers with different tile sizes, so the repeat doesn't line up
+   and the stars look scattered instead of in a grid. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Layer 1: lots of small, faint stars in mixed colors. */
+body::before {
+  opacity: 0.85;
+  background-image:
+    radial-gradient(1px 1px at 24px 38px, #ffffff, transparent),
+    radial-gradient(1px 1px at 132px 86px, #9fc8ff, transparent),
+    radial-gradient(1.5px 1.5px at 208px 22px, #ffe9a8, transparent),
+    radial-gradient(1px 1px at 286px 164px, #ffb3c7, transparent),
+    radial-gradient(1px 1px at 68px 214px, #ffffff, transparent),
+    radial-gradient(1.5px 1.5px at 176px 262px, #8ef0ff, transparent),
+    radial-gradient(1px 1px at 318px 296px, #ffc38a, transparent),
+    radial-gradient(1px 1px at 248px 118px, #c9b3ff, transparent),
+    radial-gradient(1px 1px at 96px 148px, #ffffff, transparent),
+    radial-gradient(1px 1px at 352px 58px, #9fc8ff, transparent),
+    radial-gradient(1px 1px at 12px 302px, #ffe9a8, transparent),
+    radial-gradient(1.5px 1.5px at 222px 338px, #ffffff, transparent);
+  background-size: 379px 353px;
+}
+
+/* Layer 2: a few bigger, brighter stars with a soft glow.
+   Colors follow real star types: blue-white, yellow, orange, red, plus cyan and violet. */
+body::after {
+  background-image:
+    radial-gradient(circle at 71px 113px, rgb(169, 212, 255) 0, rgb(169, 212, 255) 2px, rgba(169, 212, 255, 0.35) 3.5px, transparent 8px),
+    radial-gradient(circle at 431px 67px, rgb(255, 217, 120) 0, rgb(255, 217, 120) 2.4px, rgba(255, 217, 120, 0.35) 3.9px, transparent 9.6px),
+    radial-gradient(circle at 613px 389px, rgb(255, 143, 107) 0, rgb(255, 143, 107) 2px, rgba(255, 143, 107, 0.35) 3.5px, transparent 8px),
+    radial-gradient(circle at 257px 467px, rgb(111, 242, 255) 0, rgb(111, 242, 255) 1.8px, rgba(111, 242, 255, 0.35) 3.3px, transparent 7.2px),
+    radial-gradient(circle at 787px 211px, rgb(200, 166, 255) 0, rgb(200, 166, 255) 2.4px, rgba(200, 166, 255, 0.35) 3.9px, transparent 9.6px),
+    radial-gradient(circle at 539px 571px, rgb(255, 122, 156) 0, rgb(255, 122, 156) 1.8px, rgba(255, 122, 156, 0.35) 3.3px, transparent 7.2px),
+    radial-gradient(circle at 149px 643px, rgb(255, 255, 255) 0, rgb(255, 255, 255) 2px, rgba(255, 255, 255, 0.35) 3.5px, transparent 8px),
+    radial-gradient(circle at 701px 23px, rgb(141, 255, 176) 0, rgb(141, 255, 176) 1.6px, rgba(141, 255, 176, 0.35) 3.1px, transparent 6.4px),
+    radial-gradient(circle at 349px 281px, rgb(255, 190, 110) 0, rgb(255, 190, 110) 1.6px, rgba(255, 190, 110, 0.35) 3.1px, transparent 6.4px),
+    radial-gradient(circle at 23px 419px, rgb(150, 190, 255) 0, rgb(150, 190, 255) 1.6px, rgba(150, 190, 255, 0.35) 3.1px, transparent 6.4px);
+  background-size: 853px 727px;
+  animation: twinkle 7s ease-in-out infinite alternate;
+}
+
+/* A slow, gentle shimmer on the bright stars. */
+@keyframes twinkle {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+/* Respect people who turn off motion in their system settings. */
+@media (prefers-reduced-motion: reduce) {
+  body::after {
+    animation: none;
+    opacity: 0.85;
+  }
+}
+
+#root {
+  width: min(1400px, 100%);
+  margin: 0 auto;
+  padding: 0 24px 48px;
+  box-sizing: border-box;
 }
 
 h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
+h2,
+h3 {
   color: var(--text-h);
+  font-weight: 600;
+  margin: 0;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
+/* Section titles read like console labels. */
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
 }
+
+h3 {
+  font-size: 15px;
+}
+
 p {
   margin: 0;
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+/* Form controls */
+input,
+select,
+button {
+  font: inherit;
+  color: var(--text-h);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: rgba(8, 13, 30, 0.8);
+  padding: 8px 10px;
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button {
+  cursor: pointer;
+  background: var(--accent-bg);
+  border-color: rgba(92, 200, 255, 0.45);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+button:hover {
+  background: rgba(92, 200, 255, 0.2);
 }
