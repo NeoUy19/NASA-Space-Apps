@@ -29,9 +29,17 @@ function TrendChart({ crewId, refreshKey, status}  : { crewId: number; refreshKe
     const chartData = measurements
         .filter((m) => m.indicatorId === indicatorId)
         .map((m) => ({
-            date: new Date(m.timestamp).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+            // The full timestamp is the point's unique key. Using only the date
+            // made same-day readings share one label, so a new check-in was hidden.
+            time: m.timestamp,
             value: m.value
         }));
+
+    // Axis labels show just the date; the tooltip shows the date and time.
+    const formatDate = (t: string) =>
+        new Date(t).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const formatDateTime = (t: string) =>
+        new Date(t).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 
     const baseline = status?.bodySystems
     .flatMap((b) => b.indicators)
@@ -52,9 +60,9 @@ function TrendChart({ crewId, refreshKey, status}  : { crewId: number; refreshKe
             <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={chartData} margin={{ top: 8, right: 28, bottom: 0, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#25345c" />
-                    <XAxis dataKey="date" interval={0} stroke="#8b95a9" tick={{ fontSize: 12 }} />
+                    <XAxis dataKey="time" tickFormatter={formatDate} interval="preserveStartEnd" minTickGap={16} stroke="#8b95a9" tick={{ fontSize: 12 }} />
                     <YAxis domain={["auto", "auto"]} stroke="#8b95a9" tick={{ fontSize: 12 }} />
-                    <Tooltip contentStyle={{ background: "#0f1730", border: "1px solid #25345c", borderRadius: 8 }} labelStyle={{ color: "#eef3ff" }} />
+                    <Tooltip labelFormatter={(t) => formatDateTime(String(t))} contentStyle={{ background: "#0f1730", border: "1px solid #25345c", borderRadius: 8 }} labelStyle={{ color: "#eef3ff" }} />
                     <Line type="monotone" dataKey="value" stroke="#5cc8ff" strokeWidth={2} dot={{ r: 3 }} isAnimationActive={false} />
                     {baseline != null && (
                 <ReferenceLine y={baseline} stroke="#b6c0d6" strokeDasharray="4 4" label={{ value: "your average", fill: "#b6c0d6", fontSize: 12, position: "insideTopLeft" }} />

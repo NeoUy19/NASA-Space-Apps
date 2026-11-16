@@ -30,6 +30,12 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Fix: same-day readings on the trend chart
+- Bug: a second check-in on the same day didn't show on the chart. Each point was labeled by date only ("Nov 15"), so same-day readings shared one label and Recharts showed only the first.
+- Fix: each point is keyed by its full timestamp. The axis displays just the date (`tickFormatter`), and the tooltip shows the date and time.
+- Side effect to know for demos: a second reading on the same day pushes the first one into the baseline.
+- Concepts: [Unique keys for chart points](#unique-keys-for-chart-points)
+
 ### 2026-11-15: Credits and AI acknowledgment
 - Space Apps rules require marking where AI ("SI") tools were used: descriptive text and metadata for code and data, and a visible watermark on AI-generated images, video and audio.
 - README: a **Credits** section (team logo made in Canva, SVG Repo icons, Instrument Serif and Newsreader fonts, NASA sources, no NASA branding) and a **Use of AI tools** section. It lists what the team built first, then where AI helped, then what was not AI-generated, and links to `CLAUDE.md` for the instructions we gave the AI.
@@ -255,6 +261,10 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Unique keys for chart points
+A chart tells points apart by their x value. If two points share an x value (two readings labeled "Nov 15"), one hides the other. Use something unique (the full timestamp) as the data key, and format it for display separately.
+> Like 5: two kids with the same name tag. The teacher only ever calls the first one, so give each a unique tag and just show the first name.
 
 ### Disclosing AI use
 Say what the AI did and what the team did, as specifically as possible: in the README (descriptive text) and in the files themselves (header comments, commit co-author lines). Being able to explain every AI-written file matters more than how much AI was used.
