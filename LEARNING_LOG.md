@@ -30,6 +30,13 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Fonts, team logo, and card gradient
+- Fonts: Instrument Serif for the app title, and Newsreader for everything else. Both are open-source (SIL Open Font License) and bundled through npm (`@fontsource`), so the app still works with no network. Switzer was tried and removed.
+- Team logo (`src/assets/logo.svg`) in the header and as the browser tab icon (`public/favicon.svg`). The logo's `viewBox` was cropped to the artwork, which only filled the middle of its 2000×2000 canvas and looked tiny. The favicon has a dark rounded background, so the white "A" shows on light browser tabs.
+- Cards have a slight top-to-bottom gradient.
+- Nudged the body figure's eyes and mouth.
+- Concepts: [Bundled fonts](#bundled-fonts), [Cropping with viewBox](#cropping-with-viewbox)
+
 ### 2026-11-15: "Why it matters in space" with NASA sources
 - Clicking a body part now also shows, for each of its indicators: why it matters in spaceflight, the related spaceflight hazard, and clickable source links (shown as the site name, like `ntrs.nasa.gov`). The content was already in the database from Adi's health content, but no screen showed it.
 - `App` fetches `GET /api/indicators` once and passes it to `BodyFigure`. The panel's indicator names now come from the database instead of `mocks/indicators.ts`.
@@ -241,6 +248,14 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Bundled fonts
+`npm install @fontsource/<font>` and `import '@fontsource/<font>/400.css'` put the font files inside the app build, instead of loading them from Google's servers. Variable fonts (`@fontsource-variable/...`) hold every weight in one file. Check a font's license before shipping it.
+> Like 5: packing your own crayons instead of borrowing them at school.
+
+### Cropping with viewBox
+An SVG's `viewBox="x y width height"` decides which part of the drawing is shown. Shrinking it around the artwork removes empty space without changing any shapes. Removing fixed `width` and `height` lets CSS decide the size.
+> Like 5: zooming the camera in on the drawing instead of redrawing it.
 
 ### JSX braces
 Inside JSX, tags are written plainly and text is printed as-is: `<p>d.name</p>` prints the words "d.name". Curly braces insert a JavaScript value: `<p>{d.name}</p>` prints the actual name. Don't put braces around tags themselves.

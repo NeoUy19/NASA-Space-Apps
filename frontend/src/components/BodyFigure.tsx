@@ -210,11 +210,11 @@ fill={colorFor("RESPIRATORY")}
       </svg>
 
       {/* Eyes = SLEEP. Plain shapes drawn directly on the canvas, no nested svg needed */}
-      <ellipse cx={97.5} cy={115} rx={1.8} ry={1} fill={colorFor("SLEEP")} stroke="white" strokeWidth={0.3} onClick={() => setSelected("SLEEP")} style = {{cursor:"pointer"}} />
-      <ellipse cx={104} cy={115} rx={1.8} ry={1} fill={colorFor("SLEEP")} stroke="white" strokeWidth={0.3} onClick={() => setSelected("SLEEP")} style = {{cursor:"pointer"}}/>
+      <ellipse cx={96.5} cy={113} rx={1.8} ry={1} fill={colorFor("SLEEP")} stroke="white" strokeWidth={0.3} onClick={() => setSelected("SLEEP")} style = {{cursor:"pointer"}} />
+      <ellipse cx={104} cy={113} rx={1.8} ry={1} fill={colorFor("SLEEP")} stroke="white" strokeWidth={0.3} onClick={() => setSelected("SLEEP")} style = {{cursor:"pointer"}}/>
 
       {/* Mouth = BEHAVIORAL. A curved line: start left, bend down through the middle, end right */}
-      <path d="M97.5,118.5 Q100.75,121 104,118.5" fill="none" stroke={colorFor("BEHAVIORAL")} strokeWidth={1.2} strokeLinecap="round" onClick={() => setSelected("BEHAVIORAL")} style = {{cursor:"pointer"}} />
+      <path d="M96.5,118.5 Q100.75,121 104,118.5" fill="none" stroke={colorFor("BEHAVIORAL")} strokeWidth={1.2} strokeLinecap="round" onClick={() => setSelected("BEHAVIORAL")} style = {{cursor:"pointer"}} />
     </svg>
       {!compact && <div className="body-figure-panel">{renderPanel()}</div>}
     </div>

@@ -17,14 +17,16 @@
 }
 
 .brand-mark {
-  width: 44px;
-  height: 44px;
+  width: 125px;
+  height: 125px;
   flex: none;
 }
 
 .brand h1 {
-  font-size: 22px;
-  letter-spacing: 0.02em;
+  font-family: var(--title);
+  font-weight: 400;   /* Instrument Serif only has one weight */
+  font-size: 34px;
+  line-height: 1;
 }
 
 .brand p {
@@ -107,7 +109,9 @@
 
 /* ---------- Cards ---------- */
 .card {
-  background: var(--panel);
+  /* Slight top-to-bottom gradient: a bit lighter and bluer at the top,
+     fading to the darker panel color at the bottom. */
+  background: linear-gradient(170deg, rgba(30, 46, 92, 0.82) 0%, rgba(15, 23, 48, 0.8) 45%, rgba(9, 14, 32, 0.82) 100%);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 20px;
@@ -233,6 +237,7 @@
 }
 
 .checkin .field h3 {
+  font-family: var(--sans);   /* small field labels read better in the body font */
   font-size: 14px;
   font-weight: 500;
 }
@@ -357,9 +362,10 @@
 }
 
 .crew-col .name {
+  font-family: var(--heading);
   color: var(--text-h);
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.1;
 }
 
 .crew-col button {
@@ -377,6 +383,7 @@
 
 .reading {
   font-family: var(--mono);
+  font-variant-numeric: tabular-nums;   /* digits line up in columns */
   font-size: 20px;
   color: var(--text-h);
 }
@@ -411,11 +418,8 @@
 }
 
 .why h3 {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: 22px;
+  color: var(--text-h);
 }
 
 .why strong {

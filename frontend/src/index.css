@@ -1,5 +1,6 @@
 /* Global theme: a dark "mission console" look.
-   No images or web fonts, so it works with no network. */
+   Fonts are bundled with the app (no font CDN), so it all works with no network. */
+
 :root {
   --bg: #060a17;
   --panel: rgba(15, 23, 48, 0.78);
@@ -18,8 +19,11 @@
   --status-alert: #ff5a52;
   --status-nodata: #8b95a9;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, 'SF Mono', Consolas, monospace;
+  /* Instrument Serif is only for the app title. Newsreader is everything else. */
+  --title: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --sans: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --heading: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --mono: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
 
   font: 16px/1.5 var(--sans);
   color-scheme: dark;
@@ -113,26 +117,27 @@ body::after {
   box-sizing: border-box;
 }
 
+/* Headings use Newsreader. */
 h1,
 h2,
 h3 {
+  font-family: var(--heading);
+  font-weight: 500;
   color: var(--text-h);
-  font-weight: 600;
   margin: 0;
+  letter-spacing: 0.005em;
 }
 
-/* Section titles read like console labels. */
+/* Section titles */
 h2 {
-  font-family: var(--mono);
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
+  font-size: 28px;
+  line-height: 1.1;
   margin-bottom: 12px;
 }
 
 h3 {
-  font-size: 15px;
+  font-size: 20px;
+  line-height: 1.2;
 }
 
 p {
