@@ -1,3 +1,4 @@
+// AI-assisted: written with Claude (Anthropic) and reviewed by the team. See README, "Use of AI tools".
 import { useEffect, useState } from "react";
 import BodyFigure from "../components/BodyFigure";
 import StatusBadge from "../components/StatusBadge";

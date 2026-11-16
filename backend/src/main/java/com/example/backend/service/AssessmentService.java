@@ -1,3 +1,4 @@
+// AI-assisted in part: written by the team; one fix and the explanatory comments were added with Claude (Anthropic). See README, "Use of AI tools".
 package com.example.backend.service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
