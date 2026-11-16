@@ -1,3 +1,4 @@
+// AI-assisted: written with Claude (Anthropic) and reviewed by the team. See README, "Use of AI tools".
 package com.example.backend.config;
 
 import org.springframework.context.annotation.Configuration;

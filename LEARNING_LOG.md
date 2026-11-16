@@ -30,6 +30,13 @@ Add an entry with every commit or merge to `main`. Keep entries short.
 
 ## Progress
 
+### 2026-11-15: Credits and AI acknowledgment
+- Space Apps rules require marking where AI ("SI") tools were used: descriptive text and metadata for code and data, and a visible watermark on AI-generated images, video and audio.
+- README: a **Credits** section (team logo made in Canva, SVG Repo icons, Instrument Serif and Newsreader fonts, NASA sources, no NASA branding) and a **Use of AI tools** section. It lists what the team built first, then where AI helped, then what was not AI-generated, and links to `CLAUDE.md` for the instructions we gave the AI.
+- A one-line `AI-assisted` header comment at the top of 12 files: 9 mostly AI-written, 3 partly AI-assisted (each says which part).
+- The logo needs no watermark: it was assembled by hand in Canva, not generated.
+- Concepts: [Disclosing AI use](#disclosing-ai-use)
+
 ### 2026-11-15: Fonts, team logo, and card gradient
 - Fonts: Instrument Serif for the app title, and Newsreader for everything else. Both are open-source (SIL Open Font License) and bundled through npm (`@fontsource`), so the app still works with no network. Switzer was tried and removed.
 - Team logo (`src/assets/logo.svg`) in the header and as the browser tab icon (`public/favicon.svg`). The logo's `viewBox` was cropped to the artwork, which only filled the middle of its 2000×2000 canvas and looked tiny. The favicon has a dark rounded background, so the white "A" shows on light browser tabs.
@@ -248,6 +255,10 @@ A path parameter is part of the address and is required: `/crew/1/...` means cre
 ### Dependency injection
 A `@Service` lists what it needs in its constructor (here, three repositories). Spring creates those objects once and passes them in. You never write `new MeasurementRepository()`.
 > Like 5: you tell the teacher "I need red, blue and green," and the teacher hands you the crayons.
+
+### Disclosing AI use
+Say what the AI did and what the team did, as specifically as possible: in the README (descriptive text) and in the files themselves (header comments, commit co-author lines). Being able to explain every AI-written file matters more than how much AI was used.
+> Like 5: writing "my big sister helped with the drawing" on your school project.
 
 ### Bundled fonts
 `npm install @fontsource/<font>` and `import '@fontsource/<font>/400.css'` put the font files inside the app build, instead of loading them from Google's servers. Variable fonts (`@fontsource-variable/...`) hold every weight in one file. Check a font's license before shipping it.

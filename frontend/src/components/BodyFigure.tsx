@@ -1,3 +1,4 @@
+// AI-assisted in part: figure and click handling written by the team; the detail panel, eyes and mouth were added with Claude (Anthropic). See README, "Use of AI tools".
 import type { StatusResponse, BodySystem, EscalationLevel, Indicator } from "../types";
 import {useState} from "react";
 import { STATUS_COLORS, SYSTEM_LABELS } from "../theme";

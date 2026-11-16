@@ -1,3 +1,4 @@
+// AI-assisted: written with Claude (Anthropic) and reviewed by the team. See README, "Use of AI tools".
 import type { BodySystem, Status } from "./types";
 
 // One place for status colors and friendly labels, so every screen matches.

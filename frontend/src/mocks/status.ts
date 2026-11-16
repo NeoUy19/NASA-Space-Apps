@@ -1,3 +1,4 @@
+// AI-assisted: written with Claude (Anthropic) and reviewed by the team. See README, "Use of AI tools".
 import type { StatusResponse } from "../types";
 
 // SIMULATED data in the shape of GET /api/crew/{id}/status.

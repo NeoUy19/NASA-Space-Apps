@@ -1,3 +1,4 @@
+// AI-assisted in part: written by the team; the page layout, tabs and header were added with Claude (Anthropic). See README, "Use of AI tools".
 import CheckIn from './screens/CheckIn'
 import TrendChart from './screens/TrendChart'
 import Guidance from './screens/Guidance'
