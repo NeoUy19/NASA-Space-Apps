@@ -8,7 +8,7 @@ Astronauts do a quick daily check-in. The app compares each reading to **that as
 > **Decision support, not a diagnosis.** The app suggests who to talk to. It doesn't diagnose anything.
 
 
-##Demo
+## Demo
 https://github.com/user-attachments/assets/4aeb28ff-37ce-46be-a5e9-c73232cf425b
 
 
