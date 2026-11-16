@@ -7,6 +7,13 @@ Astronauts do a quick daily check-in. The app compares each reading to **that as
 > **Simulated data.** All crew members and measurements are made up for the demo.
 > **Decision support, not a diagnosis.** The app suggests who to talk to. It doesn't diagnose anything.
 
+
+## Demo
+https://github.com/user-attachments/assets/4aeb28ff-37ce-46be-a5e9-c73232cf425b
+
+## Presentation
+ [![Our presentation](docs/slides/1.png)](docs/slides.pdf)
+  **[View all slides (PDF)](docs/slides.pdf)**
 ## Why it matters
 
 On a Mars mission, a message to Earth can take many minutes each way. Astronauts can't wait for flight surgeons to check every reading, so the assessment runs entirely on board, with no network needed.
