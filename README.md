@@ -12,8 +12,21 @@ Astronauts do a quick daily check-in. The app compares each reading to **that as
 https://github.com/user-attachments/assets/4aeb28ff-37ce-46be-a5e9-c73232cf425b
 
 ## Presentation
- [![Our presentation](docs/slides/1.png)](docs/slides.pdf)
-  **[View all slides (PDF)](docs/slides.pdf)**
+
+![Title slide](docs/slides/1.png)
+
+<details>
+<summary><strong>View all slides</strong></summary>
+
+![Slide 2](docs/slides/2.png)
+![Slide 3](docs/slides/3.png)
+![Slide 4](docs/slides/4.png)
+![Slide 5](docs/slides/5.png)
+![Slide 6](docs/slides/6.png)
+![Slide 7](docs/slides/7.png)
+
+</details>
+
 ## Why it matters
 
 On a Mars mission, a message to Earth can take many minutes each way. Astronauts can't wait for flight surgeons to check every reading, so the assessment runs entirely on board, with no network needed.
