@@ -7,7 +7,8 @@ import { useEffect } from 'react'
 import './App.css'
 import BodyFigure from './components/BodyFigure'
 import StatusBadge from './components/StatusBadge'
-import type { CrewMember, StatusResponse } from './types'
+import type { CrewMember, StatusResponse, Indicator } from './types'
+import logo from './assets/logo.svg'
 
 // The two pages. "health" is one crew member's dashboard, "crew" compares everyone.
 type Page = "health" | "crew"
@@ -18,9 +19,16 @@ function App() {
   const [refreshKey, setRefreshKey] = useState<number>(0)
   const [crewStatus, setCrewStatus]=useState<StatusResponse|null>(null)
   const [crew, setCrew] = useState<CrewMember[]>([])
+  const [indicators, setIndicators] = useState<Indicator[]>([])
   // Start on the crew page if the address ends in #crew, so a reload keeps your place.
   const [page, setPage] = useState<Page>(window.location.hash === "#crew" ? "crew" : "health")
 
+  useEffect(()=> {
+    fetch(`http://localhost:8080/api/indicators`)
+    .then(r=> r.json())
+    .then(data => setIndicators(data))
+    .catch(()=> setIndicators([]))
+  })
   useEffect(() => {
           fetch(`http://localhost:8080/api/crew/${crewId}/status`)
           .then(r => r.json())
@@ -52,12 +60,8 @@ function App() {
     <>
       <header className="app-header">
         <div className="brand">
-          {/* A small planet with an orbit ring. Decoration only. */}
-          <svg className="brand-mark" viewBox="0 0 48 48" aria-hidden="true">
-            <ellipse cx="24" cy="24" rx="22" ry="8" fill="none" stroke="#5cc8ff" strokeWidth="1.5" opacity="0.7" transform="rotate(-20 24 24)" />
-            <circle cx="24" cy="24" r="11" fill="#1c3a7a" stroke="#5cc8ff" strokeWidth="1.5" />
-            <path d="M15 24h5l2-5 4 10 2-5h5" fill="none" stroke="#eef3ff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          {/* Team logo. alt="" because the title next to it already names the app. */}
+          <img className="brand-mark" src={logo} alt="" />
           <div>
             <h1>Astronaut Health Monitor</h1>
             <p>Onboard decision support</p>
@@ -94,7 +98,7 @@ function App() {
               <section className="card">
                 <p className="sim-tag">Simulated data</p>
                 <h2>Body status</h2>
-                <BodyFigure status={crewStatus} />
+                <BodyFigure status={crewStatus} indicators = {indicators} />
               </section>
               <section className="card">
                 <Guidance status={crewStatus} />
